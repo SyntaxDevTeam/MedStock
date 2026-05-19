@@ -2,7 +2,7 @@
 <resources>
     <color name="green_200">#FFD6FFCB</color>
     <color name="green_500">#FF72E84D</color>
-    <color name="green_700">#FF33B52B</color>
+    <color name="green_700">#2A9B23</color>
     <color name="green_900">#FF1D6A20</color>
     <color name="surface_light">#FFF8FFF6</color>
     <color name="surface_card">#FFFFFFFF</color>
