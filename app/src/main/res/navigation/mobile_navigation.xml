@@ -13,13 +13,13 @@
 
     <fragment
         android:id="@+id/nav_reflow"
-        android:name="pl.syntaxdevteam.medstock.ui.baza.ReflowFragment"
+        android:name="pl.syntaxdevteam.medstock.ui.reflow.ReflowFragment"
         android:label="@string/menu_baza"
         tools:layout="@layout/fragment_reflow" />
 
     <fragment
         android:id="@+id/nav_baza_apteki_screen"
-        android:name="pl.syntaxdevteam.medstock.ui.baza.pharmacy.PharmacyCatalogFragment"
+        android:name="pl.syntaxdevteam.medstock.ui.reflow.pharmacy.PharmacyCatalogFragment"
         android:label="@string/menu_baza"
         tools:layout="@layout/fragment_pharmacy_catalog" />
 

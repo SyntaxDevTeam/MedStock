@@ -1,4 +1,4 @@
-package pl.syntaxdevteam.medstock.ui.baza
+package pl.syntaxdevteam.medstock.ui.reflow
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
