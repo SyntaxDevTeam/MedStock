@@ -26,8 +26,15 @@
     <fragment
         android:id="@+id/nav_slideshow"
         android:name="pl.syntaxdevteam.medstock.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
+        android:label="@string/menu_alerty"
         tools:layout="@layout/fragment_slideshow" />
+
+
+    <fragment
+        android:id="@+id/nav_alerty_przypomnienia_screen"
+        android:name="pl.syntaxdevteam.medstock.ui.slideshow.reminders.RemindersFragment"
+        android:label="@string/menu_alerty"
+        tools:layout="@layout/fragment_reminders" />
 
     <fragment
         android:id="@+id/nav_account"

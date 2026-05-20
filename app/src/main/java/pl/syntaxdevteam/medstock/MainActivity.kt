@@ -65,6 +65,16 @@ class MainActivity : AppCompatActivity() {
                     titleToolbar.subtitle = getString(R.string.menu_baza_apteki)
                 }
 
+                R.id.nav_slideshow -> {
+                    titleToolbar.title = getString(R.string.menu_alerty)
+                    titleToolbar.subtitle = getString(R.string.menu_alerty_lista)
+                }
+
+                R.id.nav_alerty_przypomnienia_screen -> {
+                    titleToolbar.title = getString(R.string.menu_alerty)
+                    titleToolbar.subtitle = getString(R.string.menu_alerty_przypomnienia)
+                }
+
                 else -> {
                     titleToolbar.title = destination.label ?: getString(R.string.app_name)
                     titleToolbar.subtitle = null
@@ -107,7 +117,8 @@ class MainActivity : AppCompatActivity() {
             when (selected.itemId) {
                 R.id.nav_baza_leki -> navigateTopLevel(navController, R.id.nav_reflow)
                 R.id.nav_baza_apteki -> navigateTopLevel(navController, R.id.nav_baza_apteki_screen)
-                R.id.nav_alerty_lista, R.id.nav_alerty_przypomnienia -> navigateTopLevel(navController, R.id.nav_slideshow)
+                R.id.nav_alerty_lista -> navigateTopLevel(navController, R.id.nav_slideshow)
+                R.id.nav_alerty_przypomnienia -> navigateTopLevel(navController, R.id.nav_alerty_przypomnienia_screen)
             }
             true
         }
