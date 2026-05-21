@@ -146,18 +146,23 @@ class MainActivity : AppCompatActivity() {
         val preloader = binding.activityContainer.findViewById<View>(R.id.startup_preloader)
         val progress = binding.activityContainer.findViewById<android.widget.ProgressBar>(R.id.preloader_progress)
         val status = binding.activityContainer.findViewById<android.widget.TextView>(R.id.preloader_status)
+
+        progress.progress = 0
+        status.text = getString(R.string.preloader_status_init)
         preloader.visibility = View.VISIBLE
 
-        lifecycleScope.launch {
-            runCatching {
-                StartupIngestionRunner(applicationContext).run().collect { state ->
-                    progress.progress = state.progressPercent
-                    status.text = state.message
+        preloader.post {
+            lifecycleScope.launch {
+                runCatching {
+                    StartupIngestionRunner(applicationContext).run().collect { state ->
+                        progress.progress = state.progressPercent
+                        status.text = state.message
+                    }
+                }.onFailure {
+                    status.text = getString(R.string.preloader_status_failed, it.message ?: getString(R.string.common_unknown_error))
                 }
-            }.onFailure {
-                status.text = getString(R.string.preloader_status_failed, it.message ?: getString(R.string.common_unknown_error))
+                preloader.visibility = View.GONE
             }
-            preloader.visibility = View.GONE
         }
     }
 
