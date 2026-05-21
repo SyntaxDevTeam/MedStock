@@ -36,3 +36,18 @@ pod parsery to warstwa **staging EAV** (batch -> row -> cell + dictionary kolumn
 - `docs/registry_ingest_sqlite_schema.sql`
 
 Dopiero później warto budować stabilne tabele projekcyjne pod UI/wyszukiwanie.
+
+
+## Strategia antyduplikacyjna (aktualizacja dzienna)
+
+Jeśli chcesz uniknąć dopisywania istniejących danych, **musisz** rozdzielić:
+- datę pobrania (`fetched_at_utc`) i
+- datę logicznego wydania wsadu (`snapshot_date_utc`, np. `2026-05-21`).
+
+Dlatego w schemacie dodano:
+- unikalność `source_code + snapshot_date_utc` (1 wsad dziennie na źródło),
+- unikalność `source_code + file_sha256` (ochrona przed identycznym plikiem),
+- opcjonalny `row_hash` do szybkiego porównania zmian między dniami.
+
+W praktyce zapis powinien iść przez `UPSERT` po `(source_code, snapshot_date_utc)` i podmianę danych batcha,
+zamiast ślepego `INSERT`.
