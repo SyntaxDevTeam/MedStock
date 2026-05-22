@@ -1,6 +1,7 @@
 package pl.syntaxdevteam.medstock.ui.baza.medications
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -23,6 +24,7 @@ data class MedicationCatalogUiState(
 )
 
 class MedicationCatalogViewModel(application: Application) : AndroidViewModel(application) {
+    private val tag = "MedicationCatalogVM"
 
     private val _uiState = MutableLiveData(
         MedicationCatalogUiState(summaryResId = R.string.medication_catalog_loading)
@@ -36,6 +38,8 @@ class MedicationCatalogViewModel(application: Application) : AndroidViewModel(ap
     private fun loadCatalogPreview() {
         viewModelScope.launch(Dispatchers.IO) {
             val db = RegistryIngestDatabaseHelper(getApplication()).readableDatabase
+            val diagnostics = readDiagnostics(db)
+            Log.i(tag, "DB diagnostics: $diagnostics")
             db.rawQuery(
                 """
                 SELECT b.snapshot_date_utc,
@@ -60,6 +64,7 @@ class MedicationCatalogViewModel(application: Application) : AndroidViewModel(ap
                 emptyArray()
             ).use { cursor ->
                 if (!cursor.moveToFirst()) {
+                    Log.w(tag, "Lista leków pusta dla źródeł RPL_CSV/RPL_XLSX. Diagnostics=$diagnostics")
                     _uiState.postValue(MedicationCatalogUiState(summaryResId = R.string.medication_catalog_empty))
                     return@use
                 }
@@ -83,7 +88,30 @@ class MedicationCatalogViewModel(application: Application) : AndroidViewModel(ap
                         medications = entries
                     )
                 )
+                Log.i(tag, "Załadowano listę leków: entries=${entries.size}, snapshotDate=$snapshotDate, recordCount=$recordCount")
             }
+        }
+    }
+
+    private fun readDiagnostics(db: android.database.sqlite.SQLiteDatabase): String {
+        val totalBatches = scalarInt(db, "SELECT COUNT(*) FROM registry_import_batch")
+        val totalRows = scalarInt(db, "SELECT COUNT(*) FROM registry_row")
+        val rplBatches = scalarInt(db, "SELECT COUNT(*) FROM registry_import_batch WHERE source_code IN ('RPL_CSV','RPL_XLSX')")
+        val rplRows = scalarInt(
+            db,
+            """
+            SELECT COUNT(*)
+            FROM registry_row r
+            JOIN registry_import_batch b ON b.id = r.batch_id
+            WHERE b.source_code IN ('RPL_CSV','RPL_XLSX')
+            """.trimIndent()
+        )
+        return "batches=$totalBatches rows=$totalRows rplBatches=$rplBatches rplRows=$rplRows"
+    }
+
+    private fun scalarInt(db: android.database.sqlite.SQLiteDatabase, sql: String): Int {
+        db.rawQuery(sql, emptyArray()).use { cursor ->
+            return if (cursor.moveToFirst()) cursor.getInt(0) else 0
         }
     }
 }
