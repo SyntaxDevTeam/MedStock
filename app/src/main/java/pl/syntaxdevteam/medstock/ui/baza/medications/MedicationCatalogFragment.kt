@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Gravity
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -131,7 +130,7 @@ private class MedicationLettersAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LetterViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(android.R.layout.simple_list_item_1, parent, false)
+            .inflate(R.layout.item_medication_letter, parent, false)
         return LetterViewHolder(view)
     }
 
@@ -142,14 +141,11 @@ private class MedicationLettersAdapter(
     override fun getItemCount(): Int = items.size
 
     class LetterViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val text: TextView = view.findViewById(android.R.id.text1)
+        private val text: TextView = view.findViewById(R.id.text_medication_letter)
 
         fun bind(letter: String, isSelected: Boolean, onClick: (String) -> Unit) {
             text.text = letter
-            text.textSize = 12f
-            text.gravity = Gravity.CENTER
-            text.setTextColor(0xFF1B1B1B.toInt())
-            text.alpha = if (isSelected) 1f else 0.7f
+            text.alpha = if (isSelected) 1f else 0.82f
             text.setTypeface(text.typeface, if (isSelected) android.graphics.Typeface.BOLD else android.graphics.Typeface.NORMAL)
             itemView.setOnClickListener { onClick(letter) }
         }
