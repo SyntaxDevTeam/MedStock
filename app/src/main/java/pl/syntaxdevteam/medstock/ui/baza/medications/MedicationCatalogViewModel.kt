@@ -38,6 +38,7 @@ class MedicationCatalogViewModel(application: Application) : AndroidViewModel(ap
     private var recordCount: Int = 0
     private var offset: Int = 0
     private var selectedLetter: String = "#"
+    private var searchQuery: String = ""
     @Volatile private var isPageLoading: Boolean = false
     private val loadedItems = mutableListOf<MedicationCatalogEntry>()
 
@@ -61,6 +62,13 @@ class MedicationCatalogViewModel(application: Application) : AndroidViewModel(ap
         val state = _uiState.value ?: return
         if (!state.canLoadMore || isPageLoading) return
         loadPage(reset = false)
+    }
+
+    fun onSearchQueryChanged(query: String) {
+        val normalized = query.trim()
+        if (normalized == searchQuery) return
+        searchQuery = normalized
+        reloadCatalog()
     }
 
     private fun reloadCatalog() {
@@ -116,6 +124,12 @@ class MedicationCatalogViewModel(application: Application) : AndroidViewModel(ap
                     "#" -> Unit
                     else -> args += "$selectedLetter%"
                 }
+                val searchClause = buildSearchClause(searchQuery)
+                if (searchQuery.isNotBlank()) {
+                    val pattern = "%${searchQuery.uppercase(Locale.ROOT)}%"
+                    args += pattern
+                    args += pattern
+                }
                 args += pageSize.toString()
                 args += offset.toString()
 
@@ -130,6 +144,7 @@ class MedicationCatalogViewModel(application: Application) : AndroidViewModel(ap
                 FROM registry_rpl_snapshot s
                 WHERE s.batch_id = ?
                   $clause
+                  $searchClause
                 ORDER BY s.nazwa_produktu_leczniczego COLLATE NOCASE ASC
                 LIMIT ? OFFSET ?
                 """.trimIndent(),
@@ -193,6 +208,16 @@ class MedicationCatalogViewModel(application: Application) : AndroidViewModel(ap
             "#" -> ""
             else -> "AND UPPER(COALESCE(s.nazwa_produktu_leczniczego, '')) LIKE ?"
         }
+    }
+
+    private fun buildSearchClause(query: String): String {
+        if (query.isBlank()) return ""
+        return """
+            AND (
+                UPPER(COALESCE(s.nazwa_produktu_leczniczego, '')) LIKE ?
+                OR UPPER(COALESCE(s.substancja_czynna, '')) LIKE ?
+            )
+        """.trimIndent()
     }
 
     private fun readDiagnostics(db: android.database.sqlite.SQLiteDatabase): String {

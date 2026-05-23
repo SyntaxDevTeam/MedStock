@@ -20,6 +20,7 @@ import com.google.android.material.snackbar.Snackbar
 import pl.syntaxdevteam.medstock.core.download.StartupIngestionRunner
 import pl.syntaxdevteam.medstock.databinding.ActivityMainBinding
 import kotlinx.coroutines.launch
+import pl.syntaxdevteam.medstock.ui.baza.medications.MedicationCatalogFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -34,9 +35,16 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
         binding.appBarMain.fab?.setOnClickListener { view ->
-            Snackbar.make(view, getString(R.string.snackbar_placeholder_action), Snackbar.LENGTH_LONG)
-                .setAction(getString(R.string.common_action), null)
-                .setAnchorView(R.id.fab).show()
+            val currentFragment = (supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main) as? NavHostFragment)
+                ?.childFragmentManager
+                ?.primaryNavigationFragment
+            if (currentFragment is MedicationCatalogFragment) {
+                currentFragment.toggleSearch()
+            } else {
+                Snackbar.make(view, getString(R.string.snackbar_placeholder_action), Snackbar.LENGTH_LONG)
+                    .setAction(getString(R.string.common_action), null)
+                    .setAnchorView(R.id.fab).show()
+            }
         }
 
         val navHostFragment =
@@ -61,6 +69,8 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_baza_leki_screen -> {
                     titleToolbar.title = getString(R.string.menu_baza)
                     titleToolbar.subtitle = getString(R.string.menu_baza_leki)
+                    binding.appBarMain.fab?.setImageResource(android.R.drawable.ic_menu_search)
+                    binding.appBarMain.fab?.contentDescription = getString(R.string.fab_search_content_description)
                 }
 
                 R.id.nav_baza_apteki_screen -> {
@@ -81,6 +91,8 @@ class MainActivity : AppCompatActivity() {
                 else -> {
                     titleToolbar.title = destination.label ?: getString(R.string.app_name)
                     titleToolbar.subtitle = null
+                    binding.appBarMain.fab?.setImageResource(android.R.drawable.ic_dialog_email)
+                    binding.appBarMain.fab?.contentDescription = getString(R.string.fab_content_description)
                 }
             }
         }

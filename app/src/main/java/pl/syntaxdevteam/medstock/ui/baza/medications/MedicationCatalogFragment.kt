@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -35,6 +36,18 @@ class MedicationCatalogFragment : Fragment() {
         binding.recyclerMedicationLetters.adapter = lettersAdapter
         lettersAdapter.submitList(buildAlphabetFilter())
 
+        binding.searchMedicationCatalog.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                medicationCatalogViewModel.onSearchQueryChanged(query.orEmpty())
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                medicationCatalogViewModel.onSearchQueryChanged(newText.orEmpty())
+                return true
+            }
+        })
+
         binding.recyclerMedicationCatalog.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 if (dy <= 0) return
@@ -59,6 +72,18 @@ class MedicationCatalogFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    fun toggleSearch() {
+        val searchView = binding.searchMedicationCatalog
+        val shouldShow = searchView.visibility != View.VISIBLE
+        searchView.visibility = if (shouldShow) View.VISIBLE else View.GONE
+        if (shouldShow) {
+            searchView.requestFocus()
+        } else {
+            searchView.setQuery("", false)
+            searchView.clearFocus()
+        }
     }
 }
 

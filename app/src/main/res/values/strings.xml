@@ -35,6 +35,7 @@
     <string name="cta_danger">Skip dose</string>
 
     <string name="fab_content_description">Represents a view to invoke an action</string>
+    <string name="fab_search_content_description">Search medications</string>
     <string name="image_view_item_transform_content_description">Represents an image view in the item</string>
     <string name="snackbar_placeholder_action">Replace with your own action</string>
     <string name="common_action">Action</string>
@@ -53,9 +54,10 @@
 
     <string name="medication_catalog_loading">Loading medication catalog from local database…</string>
     <string name="medication_catalog_empty">No medication records found in local database.</string>
-    <string name="medication_catalog_summary">Medication count: %1$d \nLast update: %2$s</string>
+    <string name="medication_catalog_summary">Medication count: %1$d /n Last update: %2$s</string>
     <string name="medication_catalog_missing_name">Unnamed medication</string>
     <string name="medication_catalog_missing_common_name">No common name</string>
 
     <string name="medication_catalog_details">Dose: %1$s • EAN: %2$s • Package: %3$s</string>
+    <string name="medication_catalog_search_hint">Search by name or active substance</string>
 </resources>

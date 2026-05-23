@@ -35,6 +35,7 @@
     <string name="cta_danger">Pomiń dawkę</string>
 
     <string name="fab_content_description">Przycisk uruchamiający akcję</string>
+    <string name="fab_search_content_description">Szukaj leków</string>
     <string name="image_view_item_transform_content_description">Podgląd obrazu elementu listy</string>
     <string name="snackbar_placeholder_action">Zastąp własną akcją</string>
     <string name="common_action">Akcja</string>
@@ -53,9 +54,10 @@
 
     <string name="medication_catalog_loading">Wczytywanie katalogu leków z lokalnej bazy…</string>
     <string name="medication_catalog_empty">Brak zapisanych rekordów leków w lokalnej bazie.</string>
-    <string name="medication_catalog_summary">Ilość leków: %1$d \nOstatnia aktualizacja: %2$s</string>
+    <string name="medication_catalog_summary">Ilość leków: %1$d /n Ostatnia aktualizacja: %2$s</string>
     <string name="medication_catalog_missing_name">Lek bez nazwy</string>
     <string name="medication_catalog_missing_common_name">Brak nazwy powszechnej</string>
 
     <string name="medication_catalog_details">Dawka: %1$s • EAN: %2$s • Opakowanie: %3$s</string>
+    <string name="medication_catalog_search_hint">Szukaj po nazwie lub substancji czynnej</string>
 </resources>
