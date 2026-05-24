@@ -41,6 +41,9 @@
     <string name="common_action">Akcja</string>
     <string name="transform_item_label">To jest element nr %1$d</string>
 
+    <string name="medication_name_hint">Nazwa leku, np. Ibuprofen 200 mg</string>
+    <string name="add_medication">Dodaj lek</string>
+    <string name="medication_name_required">Najpierw wpisz nazwę leku.</string>
     <string name="preloader_status_init">Przygotowywanie synchronizacji startowej…</string>
     <string name="preloader_status_download">Pobieranie źródła: %1$s</string>
     <string name="preloader_status_parse">Parsowanie pliku: %1$s</string>
