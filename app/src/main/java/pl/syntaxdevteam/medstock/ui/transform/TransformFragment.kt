@@ -1,4 +1,4 @@
-package pl.syntaxdevteam.medstock.ui.list
+package pl.syntaxdevteam.medstock.ui.transform
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -23,7 +22,7 @@ import pl.syntaxdevteam.medstock.databinding.ItemTransformBinding
  * the [RecyclerView] using LinearLayoutManager in a small screen
  * and shows items using GridLayoutManager in a large screen.
  */
-class ListFragment : Fragment() {
+class TransformFragment : Fragment() {
 
     private var _binding: FragmentTransformBinding? = null
 
@@ -36,7 +35,7 @@ class ListFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val transformViewModel = ViewModelProvider(this).get(ListViewModel::class.java)
+        val transformViewModel = ViewModelProvider(this).get(TransformViewModel::class.java)
         _binding = FragmentTransformBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
@@ -46,16 +45,6 @@ class ListFragment : Fragment() {
         transformViewModel.itemNumbers.observe(viewLifecycleOwner) {
             adapter.submitList(it)
         }
-
-        binding.buttonAddMedication.setOnClickListener {
-            val wasAdded = transformViewModel.addMedication(binding.editTextMedicationName.text.toString())
-            if (wasAdded) {
-                binding.editTextMedicationName.text?.clear()
-            } else {
-                Toast.makeText(requireContext(), getString(R.string.medication_name_required), Toast.LENGTH_SHORT).show()
-            }
-        }
-
         return root
     }
 
@@ -65,12 +54,12 @@ class ListFragment : Fragment() {
     }
 
     class TransformAdapter :
-        ListAdapter<String, TransformViewHolder>(object : DiffUtil.ItemCallback<String>() {
+        ListAdapter<Int, TransformViewHolder>(object : DiffUtil.ItemCallback<Int>() {
 
-            override fun areItemsTheSame(oldItem: String, newItem: String): Boolean =
+            override fun areItemsTheSame(oldItem: Int, newItem: Int): Boolean =
                 oldItem == newItem
 
-            override fun areContentsTheSame(oldItem: String, newItem: String): Boolean =
+            override fun areContentsTheSame(oldItem: Int, newItem: Int): Boolean =
                 oldItem == newItem
         }) {
 
@@ -99,9 +88,9 @@ class ListFragment : Fragment() {
         }
 
         override fun onBindViewHolder(holder: TransformViewHolder, position: Int) {
-            holder.textView.text = getItem(position)
+            holder.textView.text = holder.itemView.context.getString(R.string.transform_item_label, getItem(position))
             holder.imageView.setImageDrawable(
-                ResourcesCompat.getDrawable(holder.imageView.resources, drawables[position % drawables.size], null)
+                ResourcesCompat.getDrawable(holder.imageView.resources, drawables[position], null)
             )
         }
     }

@@ -41,9 +41,6 @@
     <string name="common_action">Action</string>
     <string name="transform_item_label">This is item # %1$d</string>
 
-    <string name="medication_name_hint">Medication name, e.g. Ibuprofen 200 mg</string>
-    <string name="add_medication">Add medication</string>
-    <string name="medication_name_required">Enter a medication name first.</string>
     <string name="preloader_status_init">Preparing startup synchronization…</string>
     <string name="preloader_status_download">Downloading source: %1$s</string>
     <string name="preloader_status_parse">Parsing file: %1$s</string>
