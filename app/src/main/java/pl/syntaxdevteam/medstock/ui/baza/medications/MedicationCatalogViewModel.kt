@@ -310,12 +310,17 @@ class MedicationCatalogViewModel(application: Application) : AndroidViewModel(ap
     }
 
     private fun parsePackageInfo(kodEan: String, opakowanie: String): List<MedicationPackageInfo> {
-        val lines = opakowanie.lines().map { it.trim() }.filter { it.isNotBlank() }
+        val normalizedPackaging = opakowanie
+            .replace("\\r\\n", "\n")
+            .replace("\\n", "\n")
+            .replace("\r\n", "\n")
+        val lines = normalizedPackaging.lines().map { it.trim() }.filter { it.isNotBlank() }
         val packages = mutableListOf<MedicationPackageInfo>()
         var pendingEan: String? = null
+        val eanRegex = Regex("\\d{8,14}")
         for (line in lines) {
             val eanCandidate = line.substringBefore("¦").trim()
-            if (eanCandidate.matches(Regex("\\d{8,14}"))) {
+            if (eanCandidate.matches(eanRegex)) {
                 pendingEan = eanCandidate
                 continue
             }
@@ -326,6 +331,16 @@ class MedicationCatalogViewModel(application: Application) : AndroidViewModel(ap
                     quantity = quantityCandidate
                 )
                 pendingEan = null
+            }
+        }
+        if (packages.isEmpty() && normalizedPackaging.isNotBlank()) {
+            val compact = normalizedPackaging.replace("\n", " ")
+            val matches = Regex("(\\d{8,14})\\s*¦[^\\d]*(?:\\d+[^¦\\n]*)?\\s*(\\d+\\s*[^¦\\n]*)").findAll(compact)
+            for (match in matches) {
+                packages += MedicationPackageInfo(
+                    ean = match.groupValues[1].trim(),
+                    quantity = match.groupValues[2].trim()
+                )
             }
         }
         if (packages.isEmpty() && kodEan.isNotBlank()) {
