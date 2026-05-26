@@ -108,4 +108,14 @@
     <string name="medication_stock_status_empty">Empty</string>
     <string name="medication_default_unit">tabs.</string>
 
+
+    <string name="settings_header">App settings</string>
+    <string name="settings_info_title">Application information</string>
+    <string name="settings_author_value">Author: WieszczY (SyntaxDevTeam)</string>
+    <string name="settings_version_value">Version: %1$s</string>
+    <string name="settings_unknown_value">No data</string>
+    <string name="settings_database_size_value">Database size: %1$s (modified: %2$s)</string>
+    <string name="settings_force_update_button">Force catalog update</string>
+    <string name="settings_force_update_todo">Force catalog update will be available in the next step.</string>
+
 </resources>

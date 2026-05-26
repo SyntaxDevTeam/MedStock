@@ -4,17 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import pl.syntaxdevteam.medstock.R
 import pl.syntaxdevteam.medstock.databinding.FragmentSettingsBinding
 
 class SettingsFragment : Fragment() {
 
     private var _binding: FragmentSettingsBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -22,17 +20,23 @@ class SettingsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val settingsViewModel =
-            ViewModelProvider(this).get(SettingsViewModel::class.java)
+        val settingsViewModel = ViewModelProvider(this)[SettingsViewModel::class.java]
 
         _binding = FragmentSettingsBinding.inflate(inflater, container, false)
-        val root: View = binding.root
 
-        val textView: TextView = binding.textSettings
-        settingsViewModel.textRes.observe(viewLifecycleOwner) {
-            textView.setText(it)
+        settingsViewModel.uiState.observe(viewLifecycleOwner) { state ->
+            binding.settingsAppNameValue.text = state.appName
+            binding.settingsAuthorValue.text = state.author
+            binding.settingsVersionValue.text = state.version
+            binding.settingsLastUpdateValue.text = state.lastDatabaseUpdate
+            binding.settingsDbSizeValue.text = state.databaseSize
         }
-        return root
+
+        binding.settingsForceUpdateButton.setOnClickListener {
+            Toast.makeText(requireContext(), R.string.settings_force_update_todo, Toast.LENGTH_SHORT).show()
+        }
+
+        return binding.root
     }
 
     override fun onDestroyView() {
