@@ -7,6 +7,7 @@ tasks.register("cleanRunDebug") {
     group = "build"
     description = "Czyści build i instaluje świeży debug APK na podłączonym emulatorze/urządzeniu."
 
+    dependsOn(":clean")
     dependsOn(":app:clean")
     dependsOn(":app:assembleDebug")
     dependsOn(":app:installDebug")
