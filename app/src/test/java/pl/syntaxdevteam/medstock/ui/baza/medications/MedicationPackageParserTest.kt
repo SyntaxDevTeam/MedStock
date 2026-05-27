@@ -72,4 +72,32 @@ class MedicationPackageParserTest {
         assertTrue(result[0].quantity.contains("tablet", ignoreCase = true))
     }
 
+    @Test
+    fun `parsuje sekwencje EAN z iloscia w nastepnej linii dla danych z rejestru`() {
+        val input = """
+            05909991023782 ¦ Rp ¦ 12
+            10 tabl.
+            05909991023799 ¦ Rp ¦ 13
+            20 tabl.
+            05909991023805 ¦ Rp ¦ 14
+            30 tabl.
+            05909991023829 ¦ Rp ¦ 15
+            50 tabl.
+            05909991023836 ¦ Rp ¦ 16
+            60 tabl.
+            05909991066185 ¦ Rp ¦ 84657
+            40 tabl.
+        """.trimIndent()
+
+        val result = MedicationPackageParser.parse("", input, "Brak danych")
+
+        assertEquals(6, result.size)
+        assertEquals(MedicationPackageInfo("05909991023782", "10 tabl."), result[0])
+        assertEquals(MedicationPackageInfo("05909991023799", "20 tabl."), result[1])
+        assertEquals(MedicationPackageInfo("05909991023805", "30 tabl."), result[2])
+        assertEquals(MedicationPackageInfo("05909991023829", "50 tabl."), result[3])
+        assertEquals(MedicationPackageInfo("05909991023836", "60 tabl."), result[4])
+        assertEquals(MedicationPackageInfo("05909991066185", "40 tabl."), result[5])
+    }
+
 }
