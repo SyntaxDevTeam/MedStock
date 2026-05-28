@@ -123,12 +123,11 @@ class RegistrySnapshotPersistence(
         statement.bindStringOrNull(5, values.getOrNull(p["moc"] ?: -1))
         statement.bindStringOrNull(6, values.getOrNull(p["postac_farmaceutyczna"] ?: -1))
         statement.bindStringOrNull(7, values.getOrNull(p["podmiot_odpowiedzialny"] ?: -1))
-        statement.bindStringOrNull(8, values.getOrNull(p["kod_ean"] ?: -1))
-        statement.bindStringOrNull(9, values.getOrNull(p["opakowanie"] ?: -1))
-        statement.bindStringOrNull(10, values.getOrNull(p["substancja_czynna"] ?: -1))
-        statement.bindStringOrNull(11, values.getOrNull(p["kraj_wytworcy"] ?: -1))
-        statement.bindStringOrNull(12, values.getOrNull(p["ulotka"] ?: -1))
-        statement.bindStringOrNull(13, values.getOrNull(p["charakterystyka"] ?: -1))
+        statement.bindStringOrNull(8, values.getOrNull(p["opakowanie"] ?: -1))
+        statement.bindStringOrNull(9, values.getOrNull(p["substancja_czynna"] ?: -1))
+        statement.bindStringOrNull(10, values.getOrNull(p["kraj_wytworcy"] ?: -1))
+        statement.bindStringOrNull(11, values.getOrNull(p["ulotka"] ?: -1))
+        statement.bindStringOrNull(12, values.getOrNull(p["charakterystyka"] ?: -1))
         statement.executeInsert()
     }
 
@@ -191,8 +190,8 @@ class RegistrySnapshotPersistence(
         const val RPL_INSERT_SQL = """
             INSERT OR REPLACE INTO rpl(
                 data_snapshot,identyfikator_produktu,nazwa_produktu,droga_podania,moc,postac_farmaceutyczna,
-                podmiot_odpowiedzialny,kod_ean,opakowanie,substancja_czynna,kraj_wytworcy,ulotka,charakterystyka
-            ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)
+                podmiot_odpowiedzialny,opakowanie,substancja_czynna,kraj_wytworcy,ulotka,charakterystyka
+            ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)
         """
         const val RA_INSERT_SQL = """
             INSERT OR REPLACE INTO ra(
@@ -211,7 +210,6 @@ class RegistrySnapshotPersistence(
             "moc" to listOf("moc", "moc_dawki"),
             "postac_farmaceutyczna" to listOf("postac_farmaceutyczna"),
             "podmiot_odpowiedzialny" to listOf("podmiot_odpowiedzialny"),
-            "kod_ean" to listOf("kod_ean_udi_di", "kod_ean"),
             "opakowanie" to listOf("opakowanie", "wielkosc_opakowania"),
             "substancja_czynna" to listOf("substancja_czynna", "nazwa_powszechnie_stosowana"),
             "kraj_wytworcy" to listOf("kraj_wytworcy"),
