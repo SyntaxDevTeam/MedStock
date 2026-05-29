@@ -56,6 +56,7 @@ class MedicationCatalogViewModel(application: Application) : AndroidViewModel(ap
     private var searchQuery: String = ""
     private var searchMode: SearchMode = SearchMode.NAME
     @Volatile private var isPageLoading: Boolean = false
+    @Volatile private var pendingReset: Boolean = false
     private val loadedItems = mutableListOf<MedicationCatalogEntry>()
 
     private val _uiState = MutableLiveData(
@@ -82,9 +83,18 @@ class MedicationCatalogViewModel(application: Application) : AndroidViewModel(ap
 
     fun onSearchQueryChanged(query: String) {
         val normalized = query.trim()
-        if (normalized == searchQuery) return
+        if (normalized == searchQuery && searchMode != SearchMode.PACKAGE_CODE) return
         searchQuery = normalized
         searchMode = SearchMode.NAME
+        reloadCatalog()
+    }
+
+    fun onPackageCodeSearchRequested(rawCode: String) {
+        val normalizedCode = rawCode.filter(Char::isDigit)
+        if (normalizedCode.isBlank()) return
+        selectedLetter = "#"
+        searchQuery = normalizedCode
+        searchMode = SearchMode.PACKAGE_CODE
         reloadCatalog()
     }
 
@@ -98,7 +108,10 @@ class MedicationCatalogViewModel(application: Application) : AndroidViewModel(ap
 
     private fun loadPage(reset: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
-            if (isPageLoading) return@launch
+            if (isPageLoading) {
+                if (reset) pendingReset = true
+                return@launch
+            }
             isPageLoading = true
             try {
                 val db = RegistryIngestDatabaseHelper.getInstance(getApplication()).readableDatabase
@@ -136,12 +149,12 @@ class MedicationCatalogViewModel(application: Application) : AndroidViewModel(ap
                     "#" -> Unit
                     else -> args += "$selectedLetter%"
                 }
-                if (searchQuery.isNotBlank() && reset) {
+                if (searchQuery.isNotBlank() && reset && searchMode != SearchMode.PACKAGE_CODE) {
                     searchMode = resolveSearchMode(db, selectedSnapshotDate, selectedLetter, searchQuery)
                 }
                 val searchClause = buildSearchClause(searchQuery, searchMode)
                 if (searchQuery.isNotBlank()) {
-                    args += buildSearchPatterns(searchQuery)
+                    args += buildSearchPatterns(searchQuery, searchMode)
                 }
                 args += pageSize.toString()
                 args += offset.toString()
@@ -215,6 +228,10 @@ class MedicationCatalogViewModel(application: Application) : AndroidViewModel(ap
                 }
             } finally {
                 isPageLoading = false
+                if (pendingReset) {
+                    pendingReset = false
+                    loadPage(reset = true)
+                }
             }
         }
     }
@@ -238,9 +255,13 @@ class MedicationCatalogViewModel(application: Application) : AndroidViewModel(ap
 
     private fun buildSearchClause(query: String, mode: SearchMode): String {
         if (query.isBlank()) return ""
+        if (mode == SearchMode.PACKAGE_CODE) {
+            return "AND COALESCE(s.opakowanie, '') LIKE ?"
+        }
         val targetColumn = when (mode) {
             SearchMode.NAME -> "nazwa_produktu"
             SearchMode.SUBSTANCE -> "substancja_czynna"
+            SearchMode.PACKAGE_CODE -> error("Package code search is handled before column mode resolution.")
         }
         return """
             AND (
@@ -251,9 +272,12 @@ class MedicationCatalogViewModel(application: Application) : AndroidViewModel(ap
         """.trimIndent()
     }
 
-    private fun buildSearchPatterns(query: String): List<String> {
+    private fun buildSearchPatterns(query: String, mode: SearchMode): List<String> {
         val trimmed = query.trim()
         if (trimmed.isBlank()) return emptyList()
+        if (mode == SearchMode.PACKAGE_CODE) {
+            return listOf("%${trimmed.filter(Char::isDigit)}%")
+        }
         return listOf(
             "%$trimmed%",
             "%${trimmed.lowercase(polishLocale)}%",
@@ -292,7 +316,8 @@ class MedicationCatalogViewModel(application: Application) : AndroidViewModel(ap
 
     private enum class SearchMode {
         NAME,
-        SUBSTANCE
+        SUBSTANCE,
+        PACKAGE_CODE
     }
 
     private fun readDiagnostics(db: android.database.sqlite.SQLiteDatabase): String {
