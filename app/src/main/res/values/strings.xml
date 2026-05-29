@@ -18,6 +18,7 @@
     <string name="menu_account">Account</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_baza_leki">Medication catalog</string>
+    <string name="menu_baza_scan_find">Scan and find medication</string>
     <string name="menu_baza_apteki">Pharmacy catalog</string>
     <string name="menu_alerty_lista">Alerts list</string>
     <string name="menu_alerty_przypomnienia">Reminders list</string>

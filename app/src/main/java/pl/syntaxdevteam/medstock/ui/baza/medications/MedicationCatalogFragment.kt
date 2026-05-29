@@ -53,6 +53,13 @@ class MedicationCatalogFragment : Fragment() {
             }
         })
 
+        arguments?.getString(ARG_PACKAGE_CODE)
+            ?.takeIf { it.isNotBlank() }
+            ?.let { scannedCode ->
+                showPackageCodeSearch(scannedCode, medicationCatalogViewModel)
+                arguments?.remove(ARG_PACKAGE_CODE)
+            }
+
         binding.recyclerMedicationCatalog.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 if (dy <= 0) return
@@ -89,6 +96,20 @@ class MedicationCatalogFragment : Fragment() {
             searchView.setQuery("", false)
             searchView.clearFocus()
         }
+    }
+
+    private fun showPackageCodeSearch(
+        scannedCode: String,
+        medicationCatalogViewModel: MedicationCatalogViewModel,
+    ) {
+        binding.searchMedicationCatalog.visibility = View.VISIBLE
+        binding.searchMedicationCatalog.setQuery(scannedCode, false)
+        binding.searchMedicationCatalog.clearFocus()
+        medicationCatalogViewModel.onPackageCodeSearchRequested(scannedCode)
+    }
+
+    companion object {
+        const val ARG_PACKAGE_CODE = "package_code"
     }
 }
 
