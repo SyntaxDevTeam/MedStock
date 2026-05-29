@@ -132,6 +132,7 @@
     <string name="settings_header">Ustawienia aplikacji</string>
     <string name="settings_info_title">Informacje o aplikacji</string>
     <string name="settings_author_value">Autor: WieszczY (SyntaxDevTeam)</string>
+    <string name="settings_db_date_value">Ostatnia aktualizacja:  </string>
     <string name="settings_version_value">Wersja: %1$s</string>
     <string name="settings_unknown_value">Brak danych</string>
     <string name="settings_database_size_value">Rozmiar bazy: %1$s (modyfikacja: %2$s)</string>

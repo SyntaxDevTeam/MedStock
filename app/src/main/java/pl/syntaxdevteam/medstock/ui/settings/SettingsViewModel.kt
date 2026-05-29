@@ -41,7 +41,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             val lastDbUpdateValue = if (lastDbUpdate.isNullOrBlank()) {
                 context.getString(R.string.settings_unknown_value)
             } else {
-                lastDbUpdate
+                context.getString(R.string.settings_db_date_value) + lastDbUpdate
             }
 
             val dbSizeValue = resolveDatabaseSize(dbHelper.readableDatabase.path)
