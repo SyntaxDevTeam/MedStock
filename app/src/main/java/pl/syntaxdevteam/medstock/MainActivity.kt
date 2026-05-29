@@ -5,6 +5,7 @@ import android.os.SystemClock
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.lifecycleScope
@@ -58,13 +59,13 @@ class MainActivity : AppCompatActivity() {
             (supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main) as NavHostFragment?)!!
         val navController = navHostFragment.navController
 
-        binding.navView?.let {
+        binding.navView?.let { navView ->
             appBarConfiguration = AppBarConfiguration(
                 topLevelDestinations(),
                 binding.drawerLayout
             )
             setupActionBarWithNavController(navController, appBarConfiguration)
-            it.setupWithNavController(navController)
+            navView.setupWithNavController(navController)
         }
 
 
@@ -116,13 +117,19 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
+            syncNavigationSelection(destination.id)
+
             if (destination.id != R.id.nav_medication_editor) {
                 binding.appBarMain.fab?.show()
             }
         }
 
 
-        runIngestionWithPreloader()
+        if (savedInstanceState == null) {
+            runIngestionWithPreloader(force = false)
+        } else {
+            hideStartupPreloader()
+        }
 
         binding.appBarMain.contentMain.bottomNavView?.let {
             appBarConfiguration = AppBarConfiguration(
@@ -226,10 +233,39 @@ class MainActivity : AppCompatActivity() {
 
 
     fun triggerCatalogForceUpdate() {
-        runIngestionWithPreloader()
+        runIngestionWithPreloader(force = true)
     }
 
-    private fun runIngestionWithPreloader() {
+    private fun syncNavigationSelection(@IdRes destinationId: Int) {
+        val navView = binding.navView ?: return
+        val checkedId = when (destinationId) {
+            R.id.nav_baza_leki_screen -> R.id.nav_baza_leki_screen
+            R.id.nav_baza_apteki_screen -> R.id.nav_baza_apteki_screen
+            R.id.nav_alerty_lista_screen -> R.id.nav_alerty_lista_screen
+            R.id.nav_alerty_przypomnienia_screen -> R.id.nav_alerty_przypomnienia_screen
+            R.id.nav_medication_list -> R.id.nav_medication_list
+            R.id.nav_account -> R.id.nav_account
+            R.id.nav_settings -> R.id.nav_settings
+            else -> null
+        }
+
+        clearCheckedItems(navView.menu)
+        checkedId?.let(navView::setCheckedItem)
+    }
+
+    private fun clearCheckedItems(menu: Menu) {
+        for (index in 0 until menu.size()) {
+            val item = menu.getItem(index)
+            item.isChecked = false
+            item.subMenu?.let(::clearCheckedItems)
+        }
+    }
+
+    private fun hideStartupPreloader() {
+        binding.activityContainer.findViewById<View>(R.id.startup_preloader)?.visibility = View.GONE
+    }
+
+    private fun runIngestionWithPreloader(force: Boolean) {
         val preloader = binding.activityContainer.findViewById<View>(R.id.startup_preloader)
         val progress = binding.activityContainer.findViewById<android.widget.ProgressBar>(R.id.preloader_progress)
         val status = binding.activityContainer.findViewById<android.widget.TextView>(R.id.preloader_status)
@@ -276,7 +312,7 @@ class MainActivity : AppCompatActivity() {
                             delay(PRELOADER_ANIMATION_FRAME_MS)
                         }
                     }
-                    StartupIngestionRunner(applicationContext).run(force = true).collect { state ->
+                    StartupIngestionRunner(applicationContext).run(force = force).collect { state ->
                         latestState = state
                         stateUpdatedAt = SystemClock.uptimeMillis()
                         targetPercent = maxOf(targetPercent, state.progressPercent)

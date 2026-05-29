@@ -12,6 +12,9 @@
         android:layout_width="256dp"
         android:layout_height="match_parent"
         app:headerLayout="@layout/nav_header_main"
+        app:itemBackground="@drawable/bg_nav_drawer_item"
+        app:itemIconTint="@color/nav_drawer_item_tint"
+        app:itemTextColor="@color/nav_drawer_item_tint"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:menu="@menu/navigation_drawer" />
