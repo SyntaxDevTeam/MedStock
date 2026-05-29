@@ -164,14 +164,19 @@ class MainActivity : AppCompatActivity() {
         popupMenu.setOnMenuItemClickListener { selected ->
             when (selected.itemId) {
                 R.id.nav_medication_add_manual -> navController.navigate(R.id.nav_medication_editor)
-                R.id.nav_medication_add_scan -> startMedicationPackageScanner(navController)
+                R.id.nav_medication_add_scan -> startMedicationPackageScanner { code ->
+                    navController.navigate(
+                        R.id.nav_medication_editor,
+                        Bundle().apply { putString(MedicationEditorFragment.ARG_PACKAGE_CODE, code) }
+                    )
+                }
             }
             true
         }
         popupMenu.show()
     }
 
-    private fun startMedicationPackageScanner(navController: NavController) {
+    private fun startMedicationPackageScanner(onPackageCodeScanned: (String) -> Unit) {
         val options = GmsBarcodeScannerOptions.Builder()
             .setBarcodeFormats(Barcode.FORMAT_EAN_13, Barcode.FORMAT_EAN_8, Barcode.FORMAT_UPC_A, Barcode.FORMAT_UPC_E)
             .enableAutoZoom()
@@ -190,10 +195,7 @@ class MainActivity : AppCompatActivity() {
                 if (code.isBlank()) {
                     showLongToast(getString(R.string.medication_scan_empty_result))
                 } else {
-                    navController.navigate(
-                        R.id.nav_medication_editor,
-                        Bundle().apply { putString(MedicationEditorFragment.ARG_PACKAGE_CODE, code) }
-                    )
+                    onPackageCodeScanned(code)
                 }
             }
             .addOnFailureListener {
@@ -211,6 +213,13 @@ class MainActivity : AppCompatActivity() {
         popupMenu.setOnMenuItemClickListener { selected ->
             when (selected.itemId) {
                 R.id.nav_baza_leki -> navigateTopLevel(navController, R.id.nav_baza_leki_screen)
+                R.id.nav_baza_scan_find -> startMedicationPackageScanner { code ->
+                    navigateTopLevel(
+                        navController,
+                        R.id.nav_baza_leki_screen,
+                        Bundle().apply { putString(MedicationCatalogFragment.ARG_PACKAGE_CODE, code) }
+                    )
+                }
                 R.id.nav_baza_apteki -> navigateTopLevel(navController, R.id.nav_baza_apteki_screen)
                 R.id.nav_alerty_lista -> navigateTopLevel(navController, R.id.nav_alerty_lista_screen)
                 R.id.nav_alerty_przypomnienia -> navigateTopLevel(navController, R.id.nav_alerty_przypomnienia_screen)
@@ -220,9 +229,9 @@ class MainActivity : AppCompatActivity() {
         popupMenu.show()
     }
 
-    private fun navigateTopLevel(navController: NavController, destinationId: Int) {
-        navController.navigate(destinationId, null, navOptions {
-            launchSingleTop = true
+    private fun navigateTopLevel(navController: NavController, destinationId: Int, args: Bundle? = null) {
+        navController.navigate(destinationId, args, navOptions {
+            launchSingleTop = args == null
             restoreState = false
             popUpTo(navController.graph.startDestinationId) {
                 saveState = false
