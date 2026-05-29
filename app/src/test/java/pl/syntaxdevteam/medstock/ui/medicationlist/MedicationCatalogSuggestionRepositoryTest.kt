@@ -48,4 +48,34 @@ class MedicationCatalogSuggestionRepositoryTest {
         assertEquals("tabl.", packageInfo.unit)
         assertEquals("60 tabl.", packageInfo.displayPackage)
     }
+
+
+    @Test
+    fun extractPackageInfosReturnsEveryPackageVariant() {
+        val packageInfos = MedicationCatalogSuggestionRepository.extractPackageInfos(
+            """
+            05909990991914 ¦ Rp ¦ 20505
+            30 tabl.
+            05909990419173 ¦ Rp ¦ 29516
+            90 tabl.
+            05909991013806 ¦ Rp ¦ 79842
+            60 tabl.
+            """.trimIndent()
+        )
+
+        assertEquals(listOf("30 tabl.", "90 tabl.", "60 tabl."), packageInfos.map { it.displayPackage })
+    }
+
+    @Test
+    fun extractPackageInfoDoesNotExposeEanWhenQuantityIsMissing() {
+        val packageInfo = MedicationCatalogSuggestionRepository.extractPackageInfo("05909991129422")
+
+        assertEquals("", packageInfo.size)
+        assertEquals("", packageInfo.unit)
+        assertEquals("", packageInfo.displayPackage)
+        assertEquals(
+            "Zofenil 30 (30 mg)",
+            MedicationCatalogSuggestionRepository.buildDisplayName("Zofenil 30", "30 mg", packageInfo.displayPackage)
+        )
+    }
 }

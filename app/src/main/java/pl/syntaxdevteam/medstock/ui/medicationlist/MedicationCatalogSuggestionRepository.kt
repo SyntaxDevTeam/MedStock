@@ -1,6 +1,7 @@
 package pl.syntaxdevteam.medstock.ui.medicationlist
 
 import android.content.Context
+import android.database.sqlite.SQLiteDatabase
 import pl.syntaxdevteam.medstock.core.download.RegistryIngestDatabaseHelper
 import pl.syntaxdevteam.medstock.ui.baza.medications.MedicationPackageParser
 
@@ -33,12 +34,12 @@ class MedicationCatalogSuggestionRepository(context: Context) {
                 COALESCE(substancja_czynna, '')
             FROM rpl
             WHERE UPPER(COALESCE(nazwa_produktu, '')) LIKE ?
-            ORDER BY nazwa_produktu COLLATE NOCASE ASC, moc COLLATE NOCASE ASC, opakowanie COLLATE NOCASE ASC
+            ORDER BY nazwa_produktu COLLATE NOCASE ASC, moc COLLATE NOCASE ASC, CASE WHEN opakowanie GLOB '*[A-Za-z]*' THEN 0 ELSE 1 END, opakowanie COLLATE NOCASE ASC
             LIMIT ?
         """.trimIndent()
 
         val nameLike = "%${normalized.uppercase()}%"
-        db.rawQuery(sql, arrayOf(nameLike, limit.toString())).use { cursor ->
+        db.rawQuery(sql, arrayOf(nameLike, (limit * SEARCH_OVERFETCH_FACTOR).toString())).use { cursor ->
             val items = mutableListOf<MedicationCatalogSuggestion>()
             while (cursor.moveToNext()) {
                 val medicationName = cursor.getString(0).orEmpty().trim()
@@ -48,7 +49,7 @@ class MedicationCatalogSuggestionRepository(context: Context) {
                 val activeSubstance = cursor.getString(4).orEmpty().trim()
                 if (medicationName.isBlank()) continue
 
-                items += createSuggestion(
+                val suggestions = createSuggestions(
                     medicationName = medicationName,
                     strength = strength,
                     packageDescription = packageDescription,
@@ -56,6 +57,14 @@ class MedicationCatalogSuggestionRepository(context: Context) {
                     activeSubstance = activeSubstance,
                     matchedPackageCode = null,
                 )
+                for (suggestion in suggestions) {
+                    if (suggestion.packageSize.isBlank() && containsPackageCode(packageDescription)) continue
+                    if (items.none { item -> item.displayName == suggestion.displayName }) {
+                        items += suggestion
+                    }
+                    if (items.size >= limit) break
+                }
+                if (items.size >= limit) break
             }
             return items
         }
@@ -83,40 +92,81 @@ class MedicationCatalogSuggestionRepository(context: Context) {
             if (!cursor.moveToFirst()) return null
             val medicationName = cursor.getString(0).orEmpty().trim()
             if (medicationName.isBlank()) return null
-            return createSuggestion(
+            val strength = cursor.getString(1).orEmpty().trim()
+            val packageDescription = cursor.getString(2).orEmpty().trim()
+            val pharmaceuticalForm = cursor.getString(3).orEmpty().trim()
+            val activeSubstance = cursor.getString(4).orEmpty().trim()
+            return createSuggestions(
                 medicationName = medicationName,
-                strength = cursor.getString(1).orEmpty().trim(),
-                packageDescription = cursor.getString(2).orEmpty().trim(),
-                pharmaceuticalForm = cursor.getString(3).orEmpty().trim(),
-                activeSubstance = cursor.getString(4).orEmpty().trim(),
+                strength = strength,
+                packageDescription = readCombinedPackageDescription(
+                    db = db,
+                    medicationName = medicationName,
+                    strength = strength,
+                    pharmaceuticalForm = pharmaceuticalForm,
+                    activeSubstance = activeSubstance,
+                    fallbackPackageDescription = packageDescription,
+                ),
+                pharmaceuticalForm = pharmaceuticalForm,
+                activeSubstance = activeSubstance,
                 matchedPackageCode = normalizedCode,
-            )
+            ).firstOrNull()
         }
     }
 
-    private fun createSuggestion(
+    private fun readCombinedPackageDescription(
+        db: SQLiteDatabase,
+        medicationName: String,
+        strength: String,
+        pharmaceuticalForm: String,
+        activeSubstance: String,
+        fallbackPackageDescription: String,
+    ): String {
+        val sql = """
+            SELECT COALESCE(opakowanie, '')
+            FROM rpl
+            WHERE COALESCE(nazwa_produktu, '') = ?
+              AND COALESCE(moc, '') = ?
+              AND COALESCE(postac_farmaceutyczna, '') = ?
+              AND COALESCE(substancja_czynna, '') = ?
+            ORDER BY id ASC
+            LIMIT 200
+        """.trimIndent()
+        db.rawQuery(sql, arrayOf(medicationName, strength, pharmaceuticalForm, activeSubstance)).use { cursor ->
+            val rows = mutableListOf<String>()
+            while (cursor.moveToNext()) {
+                cursor.getString(0).orEmpty().trim().takeIf { it.isNotBlank() }?.let(rows::add)
+            }
+            return rows.joinToString(separator = "\n").ifBlank { fallbackPackageDescription }
+        }
+    }
+
+    private fun createSuggestions(
         medicationName: String,
         strength: String,
         packageDescription: String,
         pharmaceuticalForm: String,
         activeSubstance: String,
         matchedPackageCode: String?,
-    ): MedicationCatalogSuggestion {
-        val packageInfo = extractPackageInfo(packageDescription, matchedPackageCode)
-        return MedicationCatalogSuggestion(
-            displayName = buildDisplayName(medicationName, strength, packageInfo.displayPackage),
-            medicationName = medicationName,
-            strength = strength,
-            packageSize = packageInfo.size,
-            packageUnit = pharmaceuticalForm.ifBlank { packageInfo.unit },
-            packageDescription = packageDescription,
-            pharmaceuticalForm = pharmaceuticalForm,
-            activeSubstance = activeSubstance,
-        )
+    ): List<MedicationCatalogSuggestion> {
+        return extractPackageInfos(packageDescription, matchedPackageCode)
+            .map { packageInfo ->
+                MedicationCatalogSuggestion(
+                    displayName = buildDisplayName(medicationName, strength, packageInfo.displayPackage),
+                    medicationName = medicationName,
+                    strength = strength,
+                    packageSize = packageInfo.size,
+                    packageUnit = pharmaceuticalForm.ifBlank { packageInfo.unit },
+                    packageDescription = packageDescription,
+                    pharmaceuticalForm = pharmaceuticalForm,
+                    activeSubstance = activeSubstance,
+                )
+            }
     }
 
     companion object {
         private const val MIN_PACKAGE_CODE_LENGTH = 6
+        private const val SEARCH_OVERFETCH_FACTOR = 4
 
         internal fun buildDisplayName(name: String, strength: String, displayPackage: String): String {
             val details = listOf(strength, displayPackage)
@@ -126,8 +176,19 @@ class MedicationCatalogSuggestionRepository(context: Context) {
         }
 
         internal fun extractPackageInfo(packageDescription: String, matchedPackageCode: String? = null): PackageInfo {
-            val selectedQuantity = selectPackageQuantity(packageDescription, matchedPackageCode)
-            val normalized = selectedQuantity
+            return extractPackageInfos(packageDescription, matchedPackageCode).first()
+        }
+
+        internal fun extractPackageInfos(packageDescription: String, matchedPackageCode: String? = null): List<PackageInfo> {
+            val packageInfos = selectPackageQuantities(packageDescription, matchedPackageCode)
+                .map(::parsePackageInfo)
+                .filter { it.displayPackage.isNotBlank() }
+                .distinctBy { it.displayPackage }
+            return packageInfos.ifEmpty { listOf(PackageInfo(size = "", unit = "", displayPackage = "")) }
+        }
+
+        private fun parsePackageInfo(quantity: String): PackageInfo {
+            val normalized = quantity
                 .replace(Regex("\\s+"), " ")
                 .trim(' ', ';', ',')
             val match = Regex("""(?i)(\d+(?:[,.]\d+)?)\s*([\p{L}.]+\.?(?:\s+[\p{L}.]+\.?)?)?""").find(normalized)
@@ -142,23 +203,33 @@ class MedicationCatalogSuggestionRepository(context: Context) {
             return PackageInfo(size = size, unit = unit, displayPackage = displayPackage)
         }
 
-        private fun selectPackageQuantity(packageDescription: String, matchedPackageCode: String?): String {
+        private fun selectPackageQuantities(packageDescription: String, matchedPackageCode: String?): List<String> {
             val packages = MedicationPackageParser.parse(
                 kodEan = "",
                 opakowanie = packageDescription,
                 unknownPackageLabel = "",
             )
-            if (packages.isEmpty()) return packageDescription
+            if (packages.isEmpty()) {
+                return listOfNotNull(packageDescription.takeUnless { containsPackageCode(it) || it.isBlank() })
+            }
 
             val normalizedMatchedCode = matchedPackageCode.orEmpty().filter(Char::isDigit)
             val selected = if (normalizedMatchedCode.isNotBlank()) {
-                packages.firstOrNull { item -> item.ean.filter(Char::isDigit) == normalizedMatchedCode }
-                    ?: packages.firstOrNull { item -> item.ean.filter(Char::isDigit).contains(normalizedMatchedCode) }
+                packages.filter { item -> item.ean.filter(Char::isDigit) == normalizedMatchedCode }
+                    .ifEmpty { packages.filter { item -> item.ean.filter(Char::isDigit).contains(normalizedMatchedCode) } }
+                    .ifEmpty { packages }
             } else {
-                packages.firstOrNull { item -> item.quantity.isNotBlank() }
+                packages
             }
 
-            return selected?.quantity.orEmpty().ifBlank { packages.first().quantity }
+            return selected
+                .map { item -> item.quantity.trim() }
+                .filter { it.isNotBlank() && !containsPackageCode(it) }
+                .distinct()
+        }
+
+        internal fun containsPackageCode(value: String): Boolean {
+            return Regex("""\b\d{8,14}\b""").containsMatchIn(value)
         }
     }
 }
