@@ -140,7 +140,6 @@ Wybierz istniejący lek do aktualizacji albo dodaj ten wpis jako osobny lek.</st
     <string name="medication_default_unit">tabl.</string>
 
 
-    <string name="settings_header">Ustawienia aplikacji</string>
     <string name="settings_info_title">Informacje o aplikacji</string>
     <string name="settings_author_value">Autor: WieszczY (SyntaxDevTeam)</string>
     <string name="settings_db_date_value">Ostatnia aktualizacja:  </string>

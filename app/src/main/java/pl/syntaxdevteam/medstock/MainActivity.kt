@@ -175,6 +175,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+            navController.currentDestination?.id?.let(::syncNavigationSelection)
         }
     }
 
@@ -266,8 +267,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun syncNavigationSelection(@IdRes destinationId: Int) {
-        val navView = binding.navView ?: return
-        val checkedId = when (destinationId) {
+        val drawerCheckedId = when (destinationId) {
             R.id.nav_baza_leki_screen -> R.id.nav_baza_leki_screen
             R.id.nav_baza_apteki_screen -> R.id.nav_baza_apteki_screen
             R.id.nav_alerty_lista_screen -> R.id.nav_alerty_lista_screen
@@ -278,8 +278,23 @@ class MainActivity : AppCompatActivity() {
             else -> null
         }
 
-        clearCheckedItems(navView.menu)
-        checkedId?.let(navView::setCheckedItem)
+        binding.navView?.let { navView ->
+            clearCheckedItems(navView.menu)
+            drawerCheckedId?.let(navView::setCheckedItem)
+        }
+
+        val bottomCheckedId = when (destinationId) {
+            R.id.nav_baza_leki_screen, R.id.nav_baza_apteki_screen -> R.id.nav_baza_leki_screen
+            R.id.nav_alerty_lista_screen, R.id.nav_alerty_przypomnienia_screen -> R.id.nav_alerty_lista_screen
+            R.id.nav_medication_list -> R.id.nav_medication_list
+            R.id.nav_account -> R.id.nav_account
+            else -> null
+        }
+
+        binding.appBarMain.contentMain.bottomNavView?.menu?.let { bottomMenu ->
+            clearCheckedItems(bottomMenu)
+            bottomCheckedId?.let { bottomMenu.findItem(it)?.isChecked = true }
+        }
     }
 
     private fun clearCheckedItems(menu: Menu) {
