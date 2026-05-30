@@ -172,6 +172,7 @@ Select an existing medication to update, or add this as a separate list entry.</
     <string name="reminder_editor_header">Set medicine alarm</string>
     <string name="reminder_time_picker_title">Choose reminder time</string>
     <string name="reminder_label_hint">Alarm label, e.g. Morning dose</string>
+    <string name="reminder_sound_hint">Alarm sound</string>
     <string name="reminder_days_header">Repeat days</string>
     <string name="reminder_medications_header">Medicines to take</string>
     <string name="reminder_medications_empty">Add medicines to “My medicines” first, then choose them here.</string>

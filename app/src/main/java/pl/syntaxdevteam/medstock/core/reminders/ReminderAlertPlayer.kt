@@ -3,12 +3,10 @@ package pl.syntaxdevteam.medstock.core.reminders
 import android.content.Context
 import android.media.AudioAttributes
 import android.media.MediaPlayer
-import android.net.Uri
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
-import pl.syntaxdevteam.medstock.R
 
 class ReminderAlertPlayer(context: Context) {
 
@@ -23,7 +21,7 @@ class ReminderAlertPlayer(context: Context) {
         }
     }
 
-    fun start() {
+    fun start(soundName: String) {
         if (mediaPlayer?.isPlaying == true) return
         mediaPlayer = MediaPlayer().apply {
             setAudioAttributes(
@@ -32,7 +30,7 @@ class ReminderAlertPlayer(context: Context) {
                     .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                     .build()
             )
-            setDataSource(appContext, customSoundUri(appContext))
+            setDataSource(appContext, ReminderSoundCatalog.soundUri(appContext, soundName))
             isLooping = true
             prepare()
             start()
@@ -45,9 +43,6 @@ class ReminderAlertPlayer(context: Context) {
             vibrator?.vibrate(pattern, 0)
         }
     }
-
-    private fun customSoundUri(context: Context): Uri =
-        Uri.parse("android.resource://${context.packageName}/${R.raw.dzwonki}")
 
     fun stop() {
         mediaPlayer?.runCatchingStop()

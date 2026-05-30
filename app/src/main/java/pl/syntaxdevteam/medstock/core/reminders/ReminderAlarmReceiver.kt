@@ -52,7 +52,7 @@ class ReminderAlarmReceiver : BroadcastReceiver() {
         }
 
         if (!reminder.enabled) return
-        ensureChannel(context)
+        ensureChannel(context, reminder.soundName)
         showNotification(context, reminder)
 
         val isSnooze = intent.getBooleanExtra(ReminderScheduler.EXTRA_IS_SNOOZE, false)
@@ -75,7 +75,7 @@ class ReminderAlarmReceiver : BroadcastReceiver() {
         }
         val title = reminder.label.ifBlank { context.getString(R.string.reminder_notification_title) }
         val fullScreenIntent = ringingPendingIntent(context, reminder.id)
-        val notification = NotificationCompat.Builder(context, CHANNEL_ID)
+        val notification = NotificationCompat.Builder(context, channelId(reminder.soundName))
             .setSmallIcon(R.drawable.ic_alarm_black_24dp)
             .setContentTitle(title)
             .setContentText(context.getString(R.string.reminder_notification_message, medicationNames))
@@ -85,7 +85,7 @@ class ReminderAlarmReceiver : BroadcastReceiver() {
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setOngoing(true)
             .setAutoCancel(false)
-            .setSound(customSoundUri(context))
+            .setSound(customSoundUri(context, reminder.soundName))
             .setVibrate(VIBRATION_PATTERN)
             .setContentIntent(fullScreenIntent)
             .setFullScreenIntent(fullScreenIntent, true)
@@ -130,17 +130,17 @@ class ReminderAlarmReceiver : BroadcastReceiver() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-    private fun ensureChannel(context: Context) {
+    private fun ensureChannel(context: Context, soundName: String) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
         val manager = context.getSystemService(NotificationManager::class.java)
         val channel = NotificationChannel(
-            CHANNEL_ID,
+            channelId(soundName),
             context.getString(R.string.reminder_notification_channel_name),
             NotificationManager.IMPORTANCE_HIGH
         ).apply {
             description = context.getString(R.string.reminder_notification_channel_description)
             setSound(
-                customSoundUri(context),
+                customSoundUri(context, soundName),
                 AudioAttributes.Builder()
                     .setUsage(AudioAttributes.USAGE_ALARM)
                     .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
@@ -166,9 +166,11 @@ class ReminderAlarmReceiver : BroadcastReceiver() {
 
     companion object {
         const val ACTION_RINGING_RESOLVED = "pl.syntaxdevteam.medstock.action.RINGING_RESOLVED"
-        const val CHANNEL_ID = "medication_reminders_alarm_v2"
+        private const val CHANNEL_ID_PREFIX = "medication_reminders_alarm"
         private val VIBRATION_PATTERN = longArrayOf(0L, 500L, 300L, 500L, 1_000L)
 
-        fun customSoundUri(context: Context): Uri = Uri.parse("android.resource://${context.packageName}/${R.raw.dzwonki}")
+        fun customSoundUri(context: Context, soundName: String? = ReminderSoundCatalog.DEFAULT_SOUND_NAME): Uri = ReminderSoundCatalog.soundUri(context, soundName)
+
+        fun channelId(soundName: String?): String = "$CHANNEL_ID_PREFIX.${soundName ?: ReminderSoundCatalog.DEFAULT_SOUND_NAME}"
     }
 }
