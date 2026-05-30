@@ -140,7 +140,6 @@ Select an existing medication to update, or add this as a separate list entry.</
     <string name="medication_default_unit">tabs.</string>
 
 
-    <string name="settings_header">App settings</string>
     <string name="settings_info_title">Application information</string>
     <string name="settings_author_value">Author: WieszczY (SyntaxDevTeam)</string>
     <string name="settings_version_value">Version: %1$s</string>
