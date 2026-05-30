@@ -2,6 +2,7 @@ package pl.syntaxdevteam.medstock.ui.alerty.reminders
 
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.widget.ArrayAdapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +19,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import pl.syntaxdevteam.medstock.R
+import pl.syntaxdevteam.medstock.core.reminders.ReminderSoundCatalog
 import pl.syntaxdevteam.medstock.databinding.FragmentReminderEditorBinding
 import pl.syntaxdevteam.medstock.ui.medicationlist.UserMedication
 import java.util.Calendar
@@ -31,7 +33,9 @@ class ReminderEditorFragment : Fragment() {
     private var selectedHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
     private var selectedMinute = Calendar.getInstance().get(Calendar.MINUTE)
     private val selectedMedicationIds = linkedSetOf<Long>()
+    private var selectedSoundName = ReminderSoundCatalog.DEFAULT_SOUND_NAME
     private lateinit var medicationsAdapter: ReminderMedicationAdapter
+    private lateinit var reminderSounds: List<ReminderSoundCatalog.ReminderSound>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +52,7 @@ class ReminderEditorFragment : Fragment() {
         binding.recyclerviewReminderMedications.adapter = medicationsAdapter
 
         setupDayChips()
+        setupSoundDropdown()
         binding.cardReminderClock.setOnClickListener { showTimePicker() }
         binding.textReminderTime.setOnClickListener { showTimePicker() }
         binding.buttonSaveReminder.setOnClickListener { saveReminder() }
@@ -97,6 +102,8 @@ class ReminderEditorFragment : Fragment() {
         selectedMedicationIds.clear()
         selectedMedicationIds.addAll(reminder.medicationIds)
         binding.editReminderLabel.setText(reminder.label)
+        selectedSoundName = ReminderSoundCatalog.selectedSound(requireContext(), reminder.soundName).name
+        updateSoundDropdownText()
         binding.chipgroupReminderDays.children.forEach { child ->
             val chip = child as? Chip ?: return@forEach
             val index = chip.tag as Int
@@ -104,6 +111,26 @@ class ReminderEditorFragment : Fragment() {
         }
         medicationsAdapter.notifyDataSetChanged()
         updateTimeText()
+    }
+
+    private fun setupSoundDropdown() {
+        reminderSounds = ReminderSoundCatalog.sounds(requireContext())
+        val adapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_list_item_1,
+            reminderSounds.map { it.label }
+        )
+        binding.dropdownReminderSound.setAdapter(adapter)
+        binding.dropdownReminderSound.setOnItemClickListener { _, _, position, _ ->
+            selectedSoundName = reminderSounds.getOrNull(position)?.name ?: ReminderSoundCatalog.DEFAULT_SOUND_NAME
+        }
+        selectedSoundName = ReminderSoundCatalog.selectedSound(requireContext(), selectedSoundName).name
+        updateSoundDropdownText()
+    }
+
+    private fun updateSoundDropdownText() {
+        val selectedSound = ReminderSoundCatalog.selectedSound(requireContext(), selectedSoundName)
+        binding.dropdownReminderSound.setText(selectedSound.label, false)
     }
 
     private fun showTimePicker() {
@@ -144,6 +171,7 @@ class ReminderEditorFragment : Fragment() {
             minute = selectedMinute,
             dayMask = selectedDayMask(),
             label = binding.editReminderLabel.text?.toString().orEmpty(),
+            soundName = selectedSoundName,
             medicationIds = selectedMedicationIds.toList()
         )
         findNavController().navigateUp()

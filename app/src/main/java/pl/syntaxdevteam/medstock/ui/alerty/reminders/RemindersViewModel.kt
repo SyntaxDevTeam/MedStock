@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import pl.syntaxdevteam.medstock.core.download.UserMedicationRepository
 import pl.syntaxdevteam.medstock.core.reminders.MedicationReminderRepository
 import pl.syntaxdevteam.medstock.core.reminders.ReminderScheduler
+import pl.syntaxdevteam.medstock.core.reminders.ReminderSoundCatalog
 import pl.syntaxdevteam.medstock.ui.medicationlist.UserMedication
 
 class RemindersViewModel(application: Application) : AndroidViewModel(application) {
@@ -37,13 +38,14 @@ class RemindersViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun findReminder(id: Long): MedicationReminder? = reminders.value.orEmpty().firstOrNull { it.id == id }
 
-    fun saveReminder(id: Long?, hour: Int, minute: Int, dayMask: Int, label: String, medicationIds: List<Long>) {
+    fun saveReminder(id: Long?, hour: Int, minute: Int, dayMask: Int, label: String, soundName: String, medicationIds: List<Long>) {
         if (hour !in 0..23 || minute !in 0..59 || medicationIds.isEmpty()) return
+        val validSoundName = ReminderSoundCatalog.selectedSound(getApplication(), soundName).name
         viewModelScope.launch(Dispatchers.IO) {
             val savedId = if (id == null || id <= 0L) {
-                reminderRepository.insert(hour, minute, dayMask, enabled = true, label = label.trim(), medicationIds = medicationIds)
+                reminderRepository.insert(hour, minute, dayMask, enabled = true, label = label.trim(), soundName = validSoundName, medicationIds = medicationIds)
             } else {
-                reminderRepository.update(id, hour, minute, dayMask, enabled = true, label = label.trim(), medicationIds = medicationIds)
+                reminderRepository.update(id, hour, minute, dayMask, enabled = true, label = label.trim(), soundName = validSoundName, medicationIds = medicationIds)
                 id
             }
             reminderRepository.findById(savedId)?.let(scheduler::schedule)

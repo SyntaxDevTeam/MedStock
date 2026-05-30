@@ -57,7 +57,7 @@ class ReminderRingingActivity : AppCompatActivity() {
         }
 
         bindReminder(currentReminder)
-        alertPlayer.start()
+        alertPlayer.start(currentReminder.soundName)
 
         binding.buttonDoseTaken.setOnClickListener {
             repository.addDoseEvent(currentReminder, ReminderDoseEvent.ACTION_TAKEN)

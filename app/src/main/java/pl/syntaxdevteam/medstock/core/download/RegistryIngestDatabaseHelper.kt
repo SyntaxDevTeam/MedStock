@@ -52,6 +52,14 @@ class RegistryIngestDatabaseHelper(context: Context) :
         if (oldVersion < 9) {
             RegistryIngestSchema.statements.forEach(db::execSQL)
         }
+        if (oldVersion < 10) {
+            ensureColumn(
+                db,
+                table = "medication_reminder",
+                column = "sound_name",
+                definition = "TEXT NOT NULL DEFAULT 'dzwonki'"
+            )
+        }
     }
 
     override fun onDowngrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {

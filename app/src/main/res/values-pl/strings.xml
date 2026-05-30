@@ -172,6 +172,7 @@ Wybierz istniejący lek do aktualizacji albo dodaj ten wpis jako osobny lek.</st
     <string name="reminder_editor_header">Ustaw alarm leku</string>
     <string name="reminder_time_picker_title">Wybierz godzinę przypomnienia</string>
     <string name="reminder_label_hint">Etykieta alarmu, np. Poranna dawka</string>
+    <string name="reminder_sound_hint">Dźwięk alarmu</string>
     <string name="reminder_days_header">Dni powtarzania</string>
     <string name="reminder_medications_header">Leki do przyjęcia</string>
     <string name="reminder_medications_empty">Najpierw dodaj leki do „Mojej listy leków”, a potem wybierz je tutaj.</string>

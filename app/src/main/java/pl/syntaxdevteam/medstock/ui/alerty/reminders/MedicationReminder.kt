@@ -9,6 +9,7 @@ data class MedicationReminder(
     val dayMask: Int,
     val enabled: Boolean,
     val label: String,
+    val soundName: String,
     val medicationIds: List<Long>,
     val medications: List<UserMedication> = emptyList(),
 ) {

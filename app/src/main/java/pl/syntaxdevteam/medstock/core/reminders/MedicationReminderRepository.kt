@@ -14,7 +14,7 @@ class MedicationReminderRepository(context: Context) {
         val reminders = mutableListOf<MedicationReminder>()
         val db = dbHelper.readableDatabase
         val query = """
-            SELECT id, hour, minute, day_mask, enabled, label
+            SELECT id, hour, minute, day_mask, enabled, label, sound_name
             FROM medication_reminder
             ORDER BY hour ASC, minute ASC, id DESC
         """.trimIndent()
@@ -29,6 +29,7 @@ class MedicationReminderRepository(context: Context) {
                     dayMask = cursor.getInt(3),
                     enabled = cursor.getInt(4) == 1,
                     label = cursor.getString(5).orEmpty(),
+                    soundName = cursor.getString(6).orEmpty(),
                     medicationIds = meds,
                     medications = getMedications(meds)
                 )
@@ -40,7 +41,7 @@ class MedicationReminderRepository(context: Context) {
     fun findById(id: Long): MedicationReminder? {
         val db = dbHelper.readableDatabase
         val query = """
-            SELECT id, hour, minute, day_mask, enabled, label
+            SELECT id, hour, minute, day_mask, enabled, label, sound_name
             FROM medication_reminder
             WHERE id = ?
         """.trimIndent()
@@ -54,13 +55,14 @@ class MedicationReminderRepository(context: Context) {
                 dayMask = cursor.getInt(3),
                 enabled = cursor.getInt(4) == 1,
                 label = cursor.getString(5).orEmpty(),
+                soundName = cursor.getString(6).orEmpty(),
                 medicationIds = meds,
                 medications = getMedications(meds)
             )
         }
     }
 
-    fun insert(hour: Int, minute: Int, dayMask: Int, enabled: Boolean, label: String, medicationIds: List<Long>): Long {
+    fun insert(hour: Int, minute: Int, dayMask: Int, enabled: Boolean, label: String, soundName: String, medicationIds: List<Long>): Long {
         val db = dbHelper.writableDatabase
         val id = db.insertOrThrow("medication_reminder", null, ContentValues().apply {
             put("hour", hour)
@@ -68,12 +70,13 @@ class MedicationReminderRepository(context: Context) {
             put("day_mask", dayMask)
             put("enabled", if (enabled) 1 else 0)
             put("label", label)
+            put("sound_name", soundName)
         })
         replaceMedications(id, medicationIds)
         return id
     }
 
-    fun update(id: Long, hour: Int, minute: Int, dayMask: Int, enabled: Boolean, label: String, medicationIds: List<Long>): Int {
+    fun update(id: Long, hour: Int, minute: Int, dayMask: Int, enabled: Boolean, label: String, soundName: String, medicationIds: List<Long>): Int {
         val db = dbHelper.writableDatabase
         val updated = db.update("medication_reminder", ContentValues().apply {
             put("hour", hour)
@@ -81,6 +84,7 @@ class MedicationReminderRepository(context: Context) {
             put("day_mask", dayMask)
             put("enabled", if (enabled) 1 else 0)
             put("label", label)
+            put("sound_name", soundName)
             put("updated_at_utc", currentUtcDateTime())
         }, "id = ?", arrayOf(id.toString()))
         replaceMedications(id, medicationIds)

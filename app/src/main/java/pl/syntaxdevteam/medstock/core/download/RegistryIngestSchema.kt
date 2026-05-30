@@ -1,7 +1,7 @@
 package pl.syntaxdevteam.medstock.core.download
 
 internal object RegistryIngestSchema {
-    const val VERSION = 4
+    const val VERSION = 10
 
     val statements: List<String> = listOf(
         """
@@ -103,6 +103,7 @@ internal object RegistryIngestSchema {
             day_mask INTEGER NOT NULL DEFAULT 0,
             enabled INTEGER NOT NULL DEFAULT 1,
             label TEXT NOT NULL DEFAULT '',
+            sound_name TEXT NOT NULL DEFAULT 'dzwonki',
             created_at_utc TEXT NOT NULL DEFAULT (datetime('now')),
             updated_at_utc TEXT NOT NULL DEFAULT (datetime('now'))
         )
