@@ -19,14 +19,26 @@
 
         <TextView
             android:id="@+id/text_reminder_time"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.Material3.DisplaySmall"
             android:textColor="@color/text_primary"
             android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/button_delete_reminder"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="08:30" />
+
+        <ImageButton
+            android:id="@+id/button_delete_reminder"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/reminder_delete_content_description"
+            android:src="@android:drawable/ic_menu_delete"
+            app:layout_constraintEnd_toStartOf="@id/switch_reminder_enabled"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/cta_danger_text" />
 
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/switch_reminder_enabled"

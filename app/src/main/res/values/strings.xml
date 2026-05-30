@@ -177,6 +177,9 @@ Select an existing medication to update, or add this as a separate list entry.</
     <string name="reminder_medications_empty">Add medicines to “My medicines” first, then choose them here.</string>
     <string name="reminder_save">Save alarm</string>
     <string name="reminder_delete">Delete</string>
+    <string name="reminder_delete_content_description">Delete reminder</string>
+    <string name="reminder_delete_confirmation_title">Delete alarm?</string>
+    <string name="reminder_delete_confirmation_message">Delete the alarm scheduled for %1$s?</string>
     <string name="reminder_no_medications_warning_title">No medicine selected</string>
     <string name="reminder_no_medications_warning_message">This alarm will be saved as a general reminder without a linked medicine.</string>
     <string name="reminder_save_without_medications">Save without medicine</string>

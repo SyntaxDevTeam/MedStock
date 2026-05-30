@@ -11,7 +11,9 @@ import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -45,7 +47,8 @@ class RemindersListFragment : Fragment() {
                     Bundle().apply { putLong(ReminderEditorFragment.ARG_REMINDER_ID, reminder.id) }
                 )
             },
-            onEnabledChanged = viewModel::setEnabled
+            onEnabledChanged = viewModel::setEnabled,
+            onDelete = ::showDeleteReminderDialog
         )
         binding.recyclerviewReminders.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerviewReminders.adapter = adapter
@@ -82,6 +85,15 @@ class RemindersListFragment : Fragment() {
             exactSettingsIntent != null -> getString(R.string.reminder_exact_alarm_permission_message)
             else -> getString(R.string.reminder_permissions_message)
         }
+    }
+
+    private fun showDeleteReminderDialog(reminder: MedicationReminder) {
+        AlertDialog.Builder(requireContext())
+            .setTitle(R.string.reminder_delete_confirmation_title)
+            .setMessage(getString(R.string.reminder_delete_confirmation_message, reminder.timeLabel))
+            .setNegativeButton(android.R.string.cancel, null)
+            .setPositiveButton(R.string.reminder_delete) { _, _ -> viewModel.delete(reminder.id) }
+            .show()
     }
 
     private fun requestMissingPermission() {
@@ -124,7 +136,8 @@ class RemindersListFragment : Fragment() {
 
 private class RemindersAdapter(
     private val onClick: (MedicationReminder) -> Unit,
-    private val onEnabledChanged: (MedicationReminder, Boolean) -> Unit
+    private val onEnabledChanged: (MedicationReminder, Boolean) -> Unit,
+    private val onDelete: (MedicationReminder) -> Unit
 ) : RecyclerView.Adapter<ReminderViewHolder>() {
     private val items = mutableListOf<MedicationReminder>()
 
@@ -136,7 +149,7 @@ private class RemindersAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReminderViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_reminder, parent, false)
-        return ReminderViewHolder(view, onClick, onEnabledChanged)
+        return ReminderViewHolder(view, onClick, onEnabledChanged, onDelete)
     }
 
     override fun onBindViewHolder(holder: ReminderViewHolder, position: Int) = holder.bind(items[position])
@@ -147,11 +160,13 @@ private class RemindersAdapter(
 private class ReminderViewHolder(
     itemView: View,
     private val onClick: (MedicationReminder) -> Unit,
-    private val onEnabledChanged: (MedicationReminder, Boolean) -> Unit
+    private val onEnabledChanged: (MedicationReminder, Boolean) -> Unit,
+    private val onDelete: (MedicationReminder) -> Unit
 ) : RecyclerView.ViewHolder(itemView) {
     private val time: TextView = itemView.findViewById(R.id.text_reminder_time)
     private val days: TextView = itemView.findViewById(R.id.text_reminder_days)
     private val medications: TextView = itemView.findViewById(R.id.text_reminder_medications)
+    private val delete: ImageButton = itemView.findViewById(R.id.button_delete_reminder)
     private val enabled: SwitchMaterial = itemView.findViewById(R.id.switch_reminder_enabled)
 
     fun bind(reminder: MedicationReminder) {
@@ -163,6 +178,7 @@ private class ReminderViewHolder(
         enabled.setOnCheckedChangeListener(null)
         enabled.isChecked = reminder.enabled
         enabled.setOnCheckedChangeListener { _, isChecked -> onEnabledChanged(reminder, isChecked) }
+        delete.setOnClickListener { onDelete(reminder) }
         itemView.setOnClickListener { onClick(reminder) }
     }
 }
