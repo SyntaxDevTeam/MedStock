@@ -5,7 +5,7 @@
     <string name="brand_name_stock">Stock</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">@string/app_name</string>
+    <string name="nav_header_title">MedStock</string>
     <string name="nav_header_subtitle">by WieszczY (SyntaxDevTeam)</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
@@ -246,7 +246,7 @@ Select an existing medication to update, or add this as a separate list entry.</
 
     <string name="account_toolbar_subtitle">Google and cloud backup</string>
     <string name="account_google_title">Google account</string>
-    <string name="account_google_summary">Connect MedStock with a Google account. The selected email becomes the account name and the avatar uses its first letter.</string>
+    <string name="account_google_summary">Connect MedStock to your Google account\n to access advanced application features.</string>
     <string name="account_google_connect_button">Connect Google account</string>
     <string name="account_google_disconnect_button">Disconnect account</string>
     <string name="account_google_not_connected_email">No Google account connected</string>
@@ -259,7 +259,7 @@ Select an existing medication to update, or add this as a separate list entry.</
     <string name="account_disconnect_dialog_message">Drive backup will be disabled and local account connection data will be removed.</string>
     <string name="account_disconnect_dialog_confirm">Disconnect</string>
     <string name="account_drive_title">Google Drive backup</string>
-    <string name="account_drive_summary">When enabled, MedStock prepares a private medication backup snapshot for Google Drive synchronization with other devices. You can turn this option off at any time.</string>
+    <string name="account_drive_summary">By enabling the backup of your medications, you have access to them from any device on which you log in to your account via MedStock.</string>
     <string name="account_drive_switch_label">Save medication backup in Google Drive</string>
     <string name="account_drive_backup_now_button">Create backup snapshot now</string>
     <string name="account_drive_requires_google">Connect a Google account first.</string>

@@ -5,7 +5,7 @@
     <string name="brand_name_stock">Stock</string>
     <string name="navigation_drawer_open">Otwórz menu nawigacyjne</string>
     <string name="navigation_drawer_close">Zamknij menu nawigacyjne</string>
-    <string name="nav_header_title">@string/app_name</string>
+    <string name="nav_header_title">MedStock</string>
     <string name="nav_header_subtitle">by WieszczY (SyntaxDevTeam)</string>
     <string name="nav_header_desc">Nagłówek nawigacji</string>
     <string name="action_settings">Ustawienia</string>
@@ -246,7 +246,7 @@ Wybierz istniejący lek do aktualizacji albo dodaj ten wpis jako osobny lek.</st
 
     <string name="account_toolbar_subtitle">Google i kopia w chmurze</string>
     <string name="account_google_title">Konto Google</string>
-    <string name="account_google_summary">Połącz MedStock z kontem Google. Wybrany adres e-mail stanie się nazwą konta, a awatar użyje jego pierwszej litery.</string>
+    <string name="account_google_summary">Połącz MedStock z Twoim kontem Google, \naby uzyskać dostęp do zaawansowanych możliwości aplikacji.</string>
     <string name="account_google_connect_button">Połącz konto Google</string>
     <string name="account_google_disconnect_button">Odłącz konto</string>
     <string name="account_google_not_connected_email">Brak połączonego konta Google</string>
@@ -259,13 +259,13 @@ Wybierz istniejący lek do aktualizacji albo dodaj ten wpis jako osobny lek.</st
     <string name="account_disconnect_dialog_message">Kopia w Drive zostanie wyłączona, a lokalne dane połączenia konta zostaną usunięte.</string>
     <string name="account_disconnect_dialog_confirm">Odłącz</string>
     <string name="account_drive_title">Kopia w Google Drive</string>
-    <string name="account_drive_summary">Po włączeniu MedStock przygotowuje prywatny snapshot leków do synchronizacji przez Google Drive z innymi urządzeniami. Tę opcję możesz wyłączyć w każdej chwili.</string>
+    <string name="account_drive_summary">Włączając zapis kopii leków masz dostęp do nich z każdego urządzenia, na którym się zalogujesz do swojego konta poprzez MedStock.</string>
     <string name="account_drive_switch_label">Zapisuj kopię leków w Google Drive</string>
     <string name="account_drive_backup_now_button">Utwórz snapshot kopii teraz</string>
     <string name="account_drive_requires_google">Najpierw połącz konto Google.</string>
     <string name="account_drive_disabled_message">Kopia w Google Drive została wyłączona.</string>
     <string name="account_drive_snapshot_created_message">Snapshot kopii leków został przygotowany.</string>
-    <string name="account_drive_snapshot_failed_message">Nie udało się przygotować snapshotu kopii leków.</string>
+    <string name="account_drive_snapshot_failed_message">Nie udało się przygotować zapisu kopii leków.</string>
     <string name="account_drive_status_connect_first">Kopia w Google Drive będzie dostępna po połączeniu konta Google.</string>
     <string name="account_drive_status_enabled">Kopia w Google Drive jest włączona. Snapshot leków zostanie przygotowany do synchronizacji.</string>
     <string name="account_drive_status_enabled_with_date">Kopia w Google Drive jest włączona. Ostatni snapshot: %1$s.</string>
