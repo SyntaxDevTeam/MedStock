@@ -129,7 +129,7 @@ private class MedicationListViewHolder(view: View) : RecyclerView.ViewHolder(vie
 
     private fun applyStatusCardStyle(card: MaterialCardView, strokeColor: Int, backgroundColor: Int) {
         val context = card.context
-        card.strokeWidth = context.resources.getDimensionPixelSize(R.dimen.space_1)
+        card.strokeWidth = context.resources.getDimensionPixelSize(R.dimen.card_stroke)
         card.strokeColor = ContextCompat.getColor(context, strokeColor)
         card.setCardBackgroundColor(ContextCompat.getColor(context, backgroundColor))
     }
