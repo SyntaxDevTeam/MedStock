@@ -11,6 +11,7 @@ import android.content.pm.PackageManager
 import android.media.AudioAttributes
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
@@ -24,6 +25,7 @@ class ReminderAlarmReceiver : BroadcastReceiver() {
         if (reminderId <= 0L) return
         val repository = MedicationReminderRepository(context)
         val reminder = repository.findById(reminderId) ?: return
+        Log.i(TAG, "Received reminder alarm id=$reminderId action=${intent.action}")
 
         when (intent.action) {
             ReminderScheduler.ACTION_TAKE_DOSE -> {
@@ -51,7 +53,10 @@ class ReminderAlarmReceiver : BroadcastReceiver() {
             }
         }
 
-        if (!reminder.enabled) return
+        if (!reminder.enabled) {
+            Log.i(TAG, "Ignoring disabled reminder alarm id=$reminderId")
+            return
+        }
         ensureChannel(context, reminder.soundName)
         showNotification(context, reminder)
 
@@ -109,7 +114,11 @@ class ReminderAlarmReceiver : BroadcastReceiver() {
     }
 
     private fun openFullScreenActivity(context: Context, reminderId: Long) {
-        context.startActivity(ReminderRingingActivity.intent(context, reminderId).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+        runCatching {
+            context.startActivity(ReminderRingingActivity.intent(context, reminderId).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+        }.onFailure { error ->
+            Log.w(TAG, "Unable to open ringing activity for reminder id=$reminderId", error)
+        }
     }
 
     private fun ringingPendingIntent(context: Context, reminderId: Long): PendingIntent = PendingIntent.getActivity(
@@ -166,6 +175,7 @@ class ReminderAlarmReceiver : BroadcastReceiver() {
 
     companion object {
         const val ACTION_RINGING_RESOLVED = "pl.syntaxdevteam.medstock.action.RINGING_RESOLVED"
+        private const val TAG = "ReminderAlarmReceiver"
         private const val CHANNEL_ID_PREFIX = "medication_reminders_alarm"
         private val VIBRATION_PATTERN = longArrayOf(0L, 500L, 300L, 500L, 1_000L)
 
