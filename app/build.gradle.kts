@@ -72,6 +72,7 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.recyclerview)
     implementation(libs.play.services.code.scanner)
+    implementation(libs.play.services.auth)
     implementation(libs.material)
     implementation(libs.poi)
     implementation(libs.poi.ooxml)

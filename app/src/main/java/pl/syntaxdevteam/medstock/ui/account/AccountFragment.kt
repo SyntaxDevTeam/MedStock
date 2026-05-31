@@ -30,6 +30,14 @@ class AccountFragment : Fragment() {
         }
     }
 
+    private val driveAuthorizationLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            viewModel.retryPendingDriveAction()
+        } else {
+            viewModel.driveAuthorizationCancelled()
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -71,6 +79,11 @@ class AccountFragment : Fragment() {
 
             state.restorePrompt?.let { prompt ->
                 showRestorePrompt(prompt)
+            }
+
+            state.driveAuthorizationIntent?.let { intent ->
+                viewModel.driveAuthorizationLaunched()
+                driveAuthorizationLauncher.launch(intent)
             }
 
             state.transientMessageRes?.let { messageRes ->

@@ -265,9 +265,10 @@ Wybierz istniejący lek do aktualizacji albo dodaj ten wpis jako osobny lek.</st
     <string name="account_drive_requires_google">Najpierw połącz konto Google.</string>
     <string name="account_drive_disabled_message">Kopia w Google Drive została wyłączona.</string>
     <string name="account_drive_snapshot_created_message">Kopia leków, alarmów i ustawień została przygotowana.</string>
-    <string name="account_drive_snapshot_failed_message">Nie udało się przygotować kopii danych aplikacji.</string>
+    <string name="account_drive_snapshot_uploaded_message">Kopia została wysłana na Google Drive.</string>
+    <string name="account_drive_snapshot_failed_message">Nie udało się wysłać kopii danych aplikacji na Google Drive.</string>
     <string name="account_drive_status_connect_first">Kopia w Google Drive będzie dostępna po połączeniu konta Google.</string>
-    <string name="account_drive_status_enabled">Kopia w Google Drive jest włączona. Dane leków, alarmów i ustawień zostaną przygotowane do synchronizacji.</string>
+    <string name="account_drive_status_enabled">Kopia w Google Drive jest włączona. Dane leków, alarmów i ustawień będą wysyłane bezpośrednio na Google Drive.</string>
     <string name="account_drive_status_enabled_with_date">Kopia w Google Drive jest włączona. \nOstatnia kopia danych: %1$s.</string>
     <string name="account_drive_status_disabled">Kopia w Google Drive jest wyłączona.</string>
     <string name="account_drive_restore_dialog_title">Przywrócić wykrytą kopię?</string>
@@ -277,4 +278,6 @@ Wybierz istniejący lek do aktualizacji albo dodaj ten wpis jako osobny lek.</st
     <string name="account_drive_restore_no_backup_message">Nie znaleziono wcześniejszej kopii dla tego konta Google.</string>
     <string name="account_drive_restore_success_message">Kopia została przywrócona.</string>
     <string name="account_drive_restore_failed_message">Nie udało się przywrócić kopii.</string>
+    <string name="account_drive_authorization_required_message">Wymagane jest potwierdzenie dostępu do Google Drive.</string>
+    <string name="account_drive_authorization_cancelled_message">Nie przyznano dostępu do Google Drive.</string>
 </resources>

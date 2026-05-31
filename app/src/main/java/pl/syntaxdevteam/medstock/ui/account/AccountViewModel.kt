@@ -1,6 +1,7 @@
 package pl.syntaxdevteam.medstock.ui.account
 
 import android.app.Application
+import android.content.Intent
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -12,6 +13,7 @@ import pl.syntaxdevteam.medstock.R
 import pl.syntaxdevteam.medstock.core.account.AccountState
 import pl.syntaxdevteam.medstock.core.account.AccountStateStore
 import pl.syntaxdevteam.medstock.core.account.BackupSnapshotMetadata
+import pl.syntaxdevteam.medstock.core.account.DriveBackupAuthorizationRequiredException
 import pl.syntaxdevteam.medstock.core.account.DriveBackupSnapshotRepository
 import pl.syntaxdevteam.medstock.core.reminders.ReminderScheduler
 import java.time.Instant
@@ -26,6 +28,7 @@ class AccountViewModel(application: Application) : AndroidViewModel(application)
 
     private val _uiState = MutableLiveData<AccountUiState>()
     val uiState: LiveData<AccountUiState> = _uiState
+    private var pendingDriveAction: PendingDriveAction? = null
 
     init {
         publishState(accountStore.getState())
@@ -34,18 +37,10 @@ class AccountViewModel(application: Application) : AndroidViewModel(application)
     fun connect(email: String) {
         accountStore.connect(email)
         val state = accountStore.getState()
-        val restorePrompt = backupRepository.findRestorableSnapshot(state.email)?.let { metadata ->
-            AccountRestorePrompt(
-                createdAtText = metadata.formattedCreatedAt(),
-                medicationCount = metadata.medicationCount,
-                reminderCount = metadata.reminderCount,
-            )
+        _uiState.value = buildUiState(state, isBusy = true)
+        viewModelScope.launch(Dispatchers.IO) {
+            findBackupAfterConnect(state)
         }
-        publishState(
-            state = state,
-            transientMessageRes = if (restorePrompt == null) R.string.account_drive_restore_no_backup_message else null,
-            restorePrompt = restorePrompt,
-        )
     }
 
     fun disconnect() {
@@ -73,6 +68,7 @@ class AccountViewModel(application: Application) : AndroidViewModel(application)
             publishState(state, transientMessageRes = R.string.account_drive_requires_google)
             return
         }
+        pendingDriveAction = PendingDriveAction.RESTORE_BACKUP
         _uiState.value = buildUiState(state, isBusy = true)
         viewModelScope.launch(Dispatchers.IO) {
             val result = runCatching {
@@ -83,8 +79,11 @@ class AccountViewModel(application: Application) : AndroidViewModel(application)
             }
             withContext(Dispatchers.Main) {
                 result.fold(
-                    onSuccess = { publishState(it, transientMessageRes = R.string.account_drive_restore_success_message) },
-                    onFailure = { publishState(accountStore.getState(), transientMessageRes = R.string.account_drive_restore_failed_message) }
+                    onSuccess = {
+                        pendingDriveAction = null
+                        publishState(it, transientMessageRes = R.string.account_drive_restore_success_message)
+                    },
+                    onFailure = { throwable -> handleDriveFailure(throwable, R.string.account_drive_restore_failed_message) }
                 )
             }
         }
@@ -100,24 +99,90 @@ class AccountViewModel(application: Application) : AndroidViewModel(application)
             publishState(state, transientMessageRes = R.string.account_drive_requires_google)
             return
         }
+        pendingDriveAction = PendingDriveAction.CREATE_BACKUP
         _uiState.value = buildUiState(state, isBusy = true)
         viewModelScope.launch(Dispatchers.IO) {
             val result = runCatching {
-                backupRepository.createSnapshotFile(state.email)
+                backupRepository.createAndUploadSnapshot(state.email)
                 accountStore.markBackupCreated()
                 accountStore.getState()
             }
             withContext(Dispatchers.Main) {
                 result.fold(
-                    onSuccess = { publishState(it, transientMessageRes = R.string.account_drive_snapshot_created_message) },
-                    onFailure = { publishState(accountStore.getState(), transientMessageRes = R.string.account_drive_snapshot_failed_message) }
+                    onSuccess = {
+                        pendingDriveAction = null
+                        publishState(it, transientMessageRes = R.string.account_drive_snapshot_uploaded_message)
+                    },
+                    onFailure = { throwable -> handleDriveFailure(throwable, R.string.account_drive_snapshot_failed_message) }
                 )
             }
         }
     }
 
+    fun driveAuthorizationLaunched() {
+        _uiState.value = _uiState.value?.copy(driveAuthorizationIntent = null)
+    }
+
+    fun driveAuthorizationCancelled() {
+        pendingDriveAction = null
+        publishState(accountStore.getState(), transientMessageRes = R.string.account_drive_authorization_cancelled_message)
+    }
+
+    fun retryPendingDriveAction() {
+        when (pendingDriveAction) {
+            PendingDriveAction.CONNECT_LOOKUP -> {
+                val state = accountStore.getState()
+                _uiState.value = buildUiState(state, isBusy = true)
+                viewModelScope.launch(Dispatchers.IO) { findBackupAfterConnect(state) }
+            }
+            PendingDriveAction.CREATE_BACKUP -> createBackupSnapshot()
+            PendingDriveAction.RESTORE_BACKUP -> restoreBackupSnapshot()
+            null -> publishState(accountStore.getState())
+        }
+    }
+
     fun messageShown() {
         _uiState.value = _uiState.value?.copy(transientMessageRes = null)
+    }
+
+    private suspend fun findBackupAfterConnect(state: AccountState) {
+        pendingDriveAction = PendingDriveAction.CONNECT_LOOKUP
+        val result = runCatching {
+            backupRepository.findRestorableSnapshot(state.email)?.let { metadata ->
+                AccountRestorePrompt(
+                    createdAtText = metadata.formattedCreatedAt(),
+                    medicationCount = metadata.medicationCount,
+                    reminderCount = metadata.reminderCount,
+                )
+            }
+        }
+        withContext(Dispatchers.Main) {
+            result.fold(
+                onSuccess = { restorePrompt ->
+                    pendingDriveAction = null
+                    publishState(
+                        state = accountStore.getState(),
+                        transientMessageRes = if (restorePrompt == null) R.string.account_drive_restore_no_backup_message else null,
+                        restorePrompt = restorePrompt,
+                    )
+                },
+                onFailure = { throwable -> handleDriveFailure(throwable, R.string.account_drive_restore_failed_message) }
+            )
+        }
+    }
+
+    private fun handleDriveFailure(throwable: Throwable, fallbackMessageRes: Int) {
+        val state = accountStore.getState()
+        if (throwable is DriveBackupAuthorizationRequiredException && throwable.authorizationIntent != null) {
+            _uiState.value = buildUiState(
+                state = state,
+                transientMessageRes = R.string.account_drive_authorization_required_message,
+                driveAuthorizationIntent = throwable.authorizationIntent,
+            )
+        } else {
+            pendingDriveAction = null
+            publishState(state, transientMessageRes = fallbackMessageRes)
+        }
     }
 
     private fun publishState(
@@ -137,6 +202,7 @@ class AccountViewModel(application: Application) : AndroidViewModel(application)
         isBusy: Boolean = false,
         transientMessageRes: Int? = null,
         restorePrompt: AccountRestorePrompt? = null,
+        driveAuthorizationIntent: Intent? = null,
     ): AccountUiState {
         val context = getApplication<Application>()
         val lastBackup = state.formattedLastBackup()
@@ -160,6 +226,7 @@ class AccountViewModel(application: Application) : AndroidViewModel(application)
             },
             transientMessageRes = transientMessageRes,
             restorePrompt = restorePrompt,
+            driveAuthorizationIntent = driveAuthorizationIntent,
         )
     }
 
@@ -180,7 +247,14 @@ data class AccountUiState(
     val driveStatusText: String,
     val transientMessageRes: Int?,
     val restorePrompt: AccountRestorePrompt?,
+    val driveAuthorizationIntent: Intent?,
 )
+
+private enum class PendingDriveAction {
+    CONNECT_LOOKUP,
+    CREATE_BACKUP,
+    RESTORE_BACKUP,
+}
 
 data class AccountRestorePrompt(
     val createdAtText: String,

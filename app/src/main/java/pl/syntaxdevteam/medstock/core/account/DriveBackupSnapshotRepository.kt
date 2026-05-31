@@ -1,5 +1,6 @@
 package pl.syntaxdevteam.medstock.core.account
 
+import android.app.backup.BackupManager
 import android.content.ContentValues
 import android.content.Context
 import org.json.JSONArray
@@ -17,6 +18,7 @@ class DriveBackupSnapshotRepository(context: Context) {
     private val medicationRepository = UserMedicationRepository(appContext)
     private val reminderRepository = MedicationReminderRepository(appContext)
     private val dbHelper = RegistryIngestDatabaseHelper.getInstance(appContext)
+    private val driveClient = GoogleDriveBackupClient(appContext)
 
     fun createSnapshotFile(accountEmail: String): File {
         val medications = medicationRepository.getAll()
@@ -64,25 +66,38 @@ class DriveBackupSnapshotRepository(context: Context) {
         val directory = File(appContext.filesDir, BACKUP_DIRECTORY).apply { mkdirs() }
         return File(directory, BACKUP_FILE_NAME).apply {
             writeText(payload.toString(2))
+            BackupManager(appContext).dataChanged()
         }
+    }
+
+    fun createAndUploadSnapshot(accountEmail: String): BackupSnapshotMetadata {
+        val snapshot = createSnapshotFile(accountEmail)
+        driveClient.uploadSnapshot(accountEmail, snapshot)
+        return readRestorableSnapshotMetadata(snapshot, accountEmail)
+            ?: error("Created backup snapshot is not restorable for $accountEmail")
     }
 
     fun findRestorableSnapshot(accountEmail: String): BackupSnapshotMetadata? {
-        val snapshot = snapshotFile().takeIf { it.isFile } ?: return null
-        val payload = runCatching { JSONObject(snapshot.readText()) }.getOrNull() ?: return null
-        val snapshotAccountEmail = payload.optString("accountEmail")
-        if (snapshotAccountEmail.isNotBlank() && !snapshotAccountEmail.equals(accountEmail, ignoreCase = true)) {
-            return null
-        }
-        return BackupSnapshotMetadata(
-            createdAtUtc = payload.optLong("createdAtUtc", snapshot.lastModified()),
-            medicationCount = payload.optJSONArray("medications")?.length() ?: 0,
-            reminderCount = payload.optJSONArray("reminders")?.length() ?: 0,
-        )
+        val remoteSnapshot = runCatching { driveClient.downloadLatestSnapshot(accountEmail, snapshotFile()) }
+            .recoverCatching { throwable ->
+                if (throwable is DriveBackupAuthorizationRequiredException) throw throwable
+                null
+            }
+            .getOrThrow()
+        if (remoteSnapshot != null) return remoteSnapshot
+        return findLocalRestorableSnapshot(accountEmail)
     }
 
     fun restoreLatestSnapshot(accountEmail: String): BackupRestoreResult {
-        findRestorableSnapshot(accountEmail) ?: error("No restorable backup snapshot for $accountEmail")
+        val remoteSnapshot = runCatching { driveClient.downloadLatestSnapshot(accountEmail, snapshotFile()) }
+            .recoverCatching { throwable ->
+                if (throwable is DriveBackupAuthorizationRequiredException) throw throwable
+                null
+            }
+            .getOrThrow()
+        if (remoteSnapshot == null) {
+            findLocalRestorableSnapshot(accountEmail) ?: error("No restorable backup snapshot for $accountEmail")
+        }
         val payload = JSONObject(snapshotFile().readText())
         val medicationIdMap = mutableMapOf<Long, Long>()
         val db = dbHelper.writableDatabase
@@ -143,6 +158,24 @@ class DriveBackupSnapshotRepository(context: Context) {
         )
     }
 
+    private fun findLocalRestorableSnapshot(accountEmail: String): BackupSnapshotMetadata? {
+        return readRestorableSnapshotMetadata(snapshotFile(), accountEmail)
+    }
+
+    private fun readRestorableSnapshotMetadata(snapshot: File, accountEmail: String): BackupSnapshotMetadata? {
+        if (!snapshot.isFile) return null
+        val payload = runCatching { JSONObject(snapshot.readText()) }.getOrNull() ?: return null
+        val snapshotAccountEmail = payload.optString("accountEmail")
+        if (snapshotAccountEmail.isNotBlank() && !snapshotAccountEmail.equals(accountEmail, ignoreCase = true)) {
+            return null
+        }
+        return BackupSnapshotMetadata(
+            createdAtUtc = payload.optLong("createdAtUtc", snapshot.lastModified()),
+            medicationCount = payload.optJSONArray("medications")?.length() ?: 0,
+            reminderCount = payload.optJSONArray("reminders")?.length() ?: 0,
+        )
+    }
+
     private fun restorePreferences(preferences: JSONObject?) {
         preferences ?: return
         val themeMode = AppThemeMode.fromPreferenceValue(preferences.optString("themeMode"))
@@ -153,11 +186,12 @@ class DriveBackupSnapshotRepository(context: Context) {
 
     companion object {
         const val SNAPSHOT_FORMAT = "medstock-user-data-v2"
-        private const val BACKUP_DIRECTORY = "drive_backup"
-        private const val BACKUP_FILE_NAME = "medstock_medications_backup.json"
+        const val BACKUP_DIRECTORY = "drive_backup"
+        const val BACKUP_FILE_NAME = "medstock_medications_backup.json"
         private const val DEFAULT_REMINDER_SOUND = "dzwonki"
     }
 }
+
 
 data class BackupSnapshotMetadata(
     val createdAtUtc: Long,
