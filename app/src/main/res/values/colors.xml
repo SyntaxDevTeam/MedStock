@@ -32,4 +32,9 @@
     <color name="stock_status_low_background">#FFFFF8E1</color>
     <color name="stock_status_empty_stroke">#FFFF8A80</color>
     <color name="stock_status_empty_background">#FFFFF3F3</color>
+    <color name="preloader_brand_med">#FFC62828</color>
+    <color name="preloader_brand_stock">#2A9B23</color>
+    <color name="preloader_status_text">#FF1D6A20</color>
+    <color name="preloader_progress_fill">#FF72E84D</color>
+    <color name="preloader_progress_track">#FFD6FFCB</color>
 </resources>
