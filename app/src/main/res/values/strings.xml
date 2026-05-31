@@ -265,9 +265,10 @@ Select an existing medication to update, or add this as a separate list entry.</
     <string name="account_drive_requires_google">Connect a Google account first.</string>
     <string name="account_drive_disabled_message">Google Drive backup disabled.</string>
     <string name="account_drive_snapshot_created_message">Medication, reminder, and settings backup prepared.</string>
-    <string name="account_drive_snapshot_failed_message">Could not prepare app data backup.</string>
+    <string name="account_drive_snapshot_uploaded_message">Backup uploaded to Google Drive.</string>
+    <string name="account_drive_snapshot_failed_message">Could not upload app data backup to Google Drive.</string>
     <string name="account_drive_status_connect_first">Google Drive backup is available after connecting a Google account.</string>
-    <string name="account_drive_status_enabled">Google Drive backup is enabled. Medication, reminder, and settings data will be prepared for synchronization.</string>
+    <string name="account_drive_status_enabled">Google Drive backup is enabled. Medication, reminder, and settings data will be uploaded directly to Google Drive.</string>
     <string name="account_drive_status_enabled_with_date">Google Drive backup is enabled. \nLast data backup: %1$s.</string>
     <string name="account_drive_status_disabled">Google Drive backup is disabled.</string>
     <string name="account_drive_restore_dialog_title">Restore detected backup?</string>
@@ -277,4 +278,6 @@ Select an existing medication to update, or add this as a separate list entry.</
     <string name="account_drive_restore_no_backup_message">No previous backup was found for this Google account.</string>
     <string name="account_drive_restore_success_message">Backup restored.</string>
     <string name="account_drive_restore_failed_message">Could not restore backup.</string>
+    <string name="account_drive_authorization_required_message">Google Drive access confirmation is required.</string>
+    <string name="account_drive_authorization_cancelled_message">Google Drive access was not granted.</string>
 </resources>
