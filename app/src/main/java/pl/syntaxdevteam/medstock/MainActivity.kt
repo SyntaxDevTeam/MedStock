@@ -131,6 +131,12 @@ class MainActivity : AppCompatActivity() {
                     binding.appBarMain.fab?.hide()
                 }
 
+                R.id.nav_account -> {
+                    titleToolbar.title = getString(R.string.menu_account)
+                    titleToolbar.subtitle = getString(R.string.account_toolbar_subtitle)
+                    binding.appBarMain.fab?.hide()
+                }
+
                 R.id.nav_reminder_editor -> {
                     titleToolbar.title = getString(R.string.reminder_editor_title)
                     titleToolbar.subtitle = getString(R.string.menu_alerty_przypomnienia)
@@ -149,7 +155,8 @@ class MainActivity : AppCompatActivity() {
 
                 if (destination.id != R.id.nav_medication_editor &&
                 destination.id != R.id.nav_reminder_editor &&
-                destination.id != R.id.nav_baza_leki_detail_screen
+                destination.id != R.id.nav_baza_leki_detail_screen &&
+                destination.id != R.id.nav_account
             ) {
                 binding.appBarMain.fab?.show()
             }

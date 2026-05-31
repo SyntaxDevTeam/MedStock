@@ -18,7 +18,7 @@
             android:title="@string/menu_alerty_nav" />
         <item
             android:id="@+id/nav_account"
-            android:icon="@drawable/avatar_1"
+            android:icon="@drawable/ic_account_circle_black_24dp"
             android:title="@string/menu_account" />
     </group>
 </menu>
