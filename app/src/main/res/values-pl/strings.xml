@@ -268,6 +268,6 @@ Wybierz istniejący lek do aktualizacji albo dodaj ten wpis jako osobny lek.</st
     <string name="account_drive_snapshot_failed_message">Nie udało się przygotować zapisu kopii leków.</string>
     <string name="account_drive_status_connect_first">Kopia w Google Drive będzie dostępna po połączeniu konta Google.</string>
     <string name="account_drive_status_enabled">Kopia w Google Drive jest włączona. Snapshot leków zostanie przygotowany do synchronizacji.</string>
-    <string name="account_drive_status_enabled_with_date">Kopia w Google Drive jest włączona. Ostatni snapshot: %1$s.</string>
+    <string name="account_drive_status_enabled_with_date">Kopia w Google Drive jest włączona. \nOstatni snapshot: %1$s.</string>
     <string name="account_drive_status_disabled">Kopia w Google Drive jest wyłączona.</string>
 </resources>
