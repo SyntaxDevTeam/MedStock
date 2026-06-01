@@ -15,6 +15,8 @@ import pl.syntaxdevteam.medstock.core.account.AccountStateStore
 import pl.syntaxdevteam.medstock.core.account.BackupSnapshotMetadata
 import pl.syntaxdevteam.medstock.core.account.DriveBackupAuthorizationRequiredException
 import pl.syntaxdevteam.medstock.core.account.DriveBackupSnapshotRepository
+import pl.syntaxdevteam.medstock.core.account.GoogleAccountProfileClient
+import pl.syntaxdevteam.medstock.core.account.GoogleProfileAuthorizationRequiredException
 import pl.syntaxdevteam.medstock.core.reminders.ReminderScheduler
 import java.time.Instant
 import java.time.ZoneId
@@ -24,11 +26,13 @@ class AccountViewModel(application: Application) : AndroidViewModel(application)
 
     private val accountStore = AccountStateStore(application)
     private val backupRepository = DriveBackupSnapshotRepository(application)
+    private val profileClient = GoogleAccountProfileClient(application)
     private val reminderScheduler = ReminderScheduler(application)
 
     private val _uiState = MutableLiveData<AccountUiState>()
     val uiState: LiveData<AccountUiState> = _uiState
     private var pendingDriveAction: PendingDriveAction? = null
+    private var pendingAuthorizationTarget: PendingAuthorizationTarget? = null
 
     init {
         publishState(accountStore.getState())
@@ -39,7 +43,7 @@ class AccountViewModel(application: Application) : AndroidViewModel(application)
         val state = accountStore.getState()
         _uiState.value = buildUiState(state, isBusy = true)
         viewModelScope.launch(Dispatchers.IO) {
-            findBackupAfterConnect(state)
+            finishConnect(state.email)
         }
     }
 
@@ -80,6 +84,7 @@ class AccountViewModel(application: Application) : AndroidViewModel(application)
             withContext(Dispatchers.Main) {
                 result.fold(
                     onSuccess = {
+                        pendingAuthorizationTarget = null
                         pendingDriveAction = null
                         publishState(it, transientMessageRes = R.string.account_drive_restore_success_message)
                     },
@@ -110,6 +115,7 @@ class AccountViewModel(application: Application) : AndroidViewModel(application)
             withContext(Dispatchers.Main) {
                 result.fold(
                     onSuccess = {
+                        pendingAuthorizationTarget = null
                         pendingDriveAction = null
                         publishState(it, transientMessageRes = R.string.account_drive_snapshot_uploaded_message)
                     },
@@ -124,8 +130,21 @@ class AccountViewModel(application: Application) : AndroidViewModel(application)
     }
 
     fun driveAuthorizationCancelled() {
-        pendingDriveAction = null
-        publishState(accountStore.getState(), transientMessageRes = R.string.account_drive_authorization_cancelled_message)
+        when (pendingAuthorizationTarget) {
+            PendingAuthorizationTarget.GOOGLE_PROFILE -> {
+                pendingAuthorizationTarget = null
+                val state = accountStore.getState()
+                _uiState.value = buildUiState(state, isBusy = true)
+                viewModelScope.launch(Dispatchers.IO) {
+                    findBackupAfterConnect(state)
+                }
+            }
+            PendingAuthorizationTarget.GOOGLE_DRIVE, null -> {
+                pendingAuthorizationTarget = null
+                pendingDriveAction = null
+                publishState(accountStore.getState(), transientMessageRes = R.string.account_drive_authorization_cancelled_message)
+            }
+        }
     }
 
     fun retryPendingDriveAction() {
@@ -133,7 +152,7 @@ class AccountViewModel(application: Application) : AndroidViewModel(application)
             PendingDriveAction.CONNECT_LOOKUP -> {
                 val state = accountStore.getState()
                 _uiState.value = buildUiState(state, isBusy = true)
-                viewModelScope.launch(Dispatchers.IO) { findBackupAfterConnect(state) }
+                viewModelScope.launch(Dispatchers.IO) { finishConnect(state.email) }
             }
             PendingDriveAction.CREATE_BACKUP -> createBackupSnapshot()
             PendingDriveAction.RESTORE_BACKUP -> restoreBackupSnapshot()
@@ -143,6 +162,28 @@ class AccountViewModel(application: Application) : AndroidViewModel(application)
 
     fun messageShown() {
         _uiState.value = _uiState.value?.copy(transientMessageRes = null)
+    }
+
+    private suspend fun finishConnect(email: String) {
+        pendingDriveAction = PendingDriveAction.CONNECT_LOOKUP
+        val profileResult = runCatching { profileClient.fetchProfile(email) }
+        val authorizationException = profileResult.exceptionOrNull() as? GoogleProfileAuthorizationRequiredException
+        if (authorizationException?.authorizationIntent != null) {
+            pendingAuthorizationTarget = PendingAuthorizationTarget.GOOGLE_PROFILE
+            withContext(Dispatchers.Main) {
+                _uiState.value = buildUiState(
+                    state = accountStore.getState(),
+                    transientMessageRes = R.string.account_google_authorization_required_message,
+                    driveAuthorizationIntent = authorizationException.authorizationIntent,
+                )
+            }
+            return
+        }
+        pendingAuthorizationTarget = null
+        profileResult.getOrNull()?.avatarUrl?.let { avatarUrl ->
+            accountStore.setAvatarUrl(email, avatarUrl)
+        }
+        findBackupAfterConnect(accountStore.getState())
     }
 
     private suspend fun findBackupAfterConnect(state: AccountState) {
@@ -159,6 +200,7 @@ class AccountViewModel(application: Application) : AndroidViewModel(application)
         withContext(Dispatchers.Main) {
             result.fold(
                 onSuccess = { restorePrompt ->
+                    pendingAuthorizationTarget = null
                     pendingDriveAction = null
                     publishState(
                         state = accountStore.getState(),
@@ -174,12 +216,14 @@ class AccountViewModel(application: Application) : AndroidViewModel(application)
     private fun handleDriveFailure(throwable: Throwable, fallbackMessageRes: Int) {
         val state = accountStore.getState()
         if (throwable is DriveBackupAuthorizationRequiredException && throwable.authorizationIntent != null) {
+            pendingAuthorizationTarget = PendingAuthorizationTarget.GOOGLE_DRIVE
             _uiState.value = buildUiState(
                 state = state,
                 transientMessageRes = R.string.account_drive_authorization_required_message,
                 driveAuthorizationIntent = throwable.authorizationIntent,
             )
         } else {
+            pendingAuthorizationTarget = null
             pendingDriveAction = null
             publishState(state, transientMessageRes = fallbackMessageRes)
         }
@@ -210,6 +254,7 @@ class AccountViewModel(application: Application) : AndroidViewModel(application)
             isConnected = state.isConnected,
             email = state.email,
             avatarLabel = state.avatarLabel,
+            avatarUrl = state.avatarUrl,
             driveBackupEnabled = state.driveBackupEnabled,
             driveControlsEnabled = state.isConnected && !isBusy,
             isBusy = isBusy,
@@ -240,6 +285,7 @@ data class AccountUiState(
     val isConnected: Boolean,
     val email: String,
     val avatarLabel: String,
+    val avatarUrl: String?,
     val driveBackupEnabled: Boolean,
     val driveControlsEnabled: Boolean,
     val isBusy: Boolean,
@@ -254,6 +300,11 @@ private enum class PendingDriveAction {
     CONNECT_LOOKUP,
     CREATE_BACKUP,
     RESTORE_BACKUP,
+}
+
+private enum class PendingAuthorizationTarget {
+    GOOGLE_PROFILE,
+    GOOGLE_DRIVE,
 }
 
 data class AccountRestorePrompt(

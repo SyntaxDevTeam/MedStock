@@ -2,6 +2,7 @@ package pl.syntaxdevteam.medstock.ui.account
 
 import android.accounts.AccountManager
 import android.app.Activity
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,15 +11,24 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import pl.syntaxdevteam.medstock.R
 import pl.syntaxdevteam.medstock.databinding.FragmentAccountBinding
+import java.net.HttpURLConnection
+import java.net.URL
 
 class AccountFragment : Fragment() {
 
     private var _binding: FragmentAccountBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: AccountViewModel
+    private var avatarLoadJob: Job? = null
 
     private val googleAccountPickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode != Activity.RESULT_OK) return@registerForActivityResult
@@ -63,7 +73,7 @@ class AccountFragment : Fragment() {
 
     private fun observeState() {
         viewModel.uiState.observe(viewLifecycleOwner) { state ->
-            binding.accountAvatarLabel.text = state.avatarLabel
+            bindAvatar(state)
             binding.accountEmailValue.text = if (state.isConnected) state.email else getString(R.string.account_google_not_connected_email)
             binding.accountStatusValue.text = state.accountStatusText
             binding.accountGoogleConnectButton.visibility = if (state.isConnected) View.GONE else View.VISIBLE
@@ -97,6 +107,58 @@ class AccountFragment : Fragment() {
             }
         }
     }
+
+    private fun bindAvatar(state: AccountUiState) {
+        binding.accountAvatarLabel.text = state.avatarLabel
+        val avatarUrl = state.avatarUrl
+        if (!state.isConnected || avatarUrl.isNullOrBlank()) {
+            avatarLoadJob?.cancel()
+            binding.accountAvatarImage.tag = null
+            binding.accountAvatarImage.setImageDrawable(null)
+            binding.accountAvatarImage.visibility = View.GONE
+            binding.accountAvatarLabel.visibility = View.VISIBLE
+            return
+        }
+
+        if (binding.accountAvatarImage.tag == avatarUrl && binding.accountAvatarImage.drawable != null) {
+            binding.accountAvatarLabel.visibility = View.GONE
+            binding.accountAvatarImage.visibility = View.VISIBLE
+            return
+        }
+
+        avatarLoadJob?.cancel()
+        binding.accountAvatarImage.tag = avatarUrl
+        binding.accountAvatarImage.setImageDrawable(null)
+        binding.accountAvatarImage.visibility = View.GONE
+        binding.accountAvatarLabel.visibility = View.VISIBLE
+        avatarLoadJob = viewLifecycleOwner.lifecycleScope.launch {
+            val avatarBitmap = withContext(Dispatchers.IO) {
+                runCatching { downloadAvatarBitmap(avatarUrl) }.getOrNull()
+            }
+            val currentBinding = _binding ?: return@launch
+            if (!isActive || currentBinding.accountAvatarImage.tag != avatarUrl) return@launch
+            if (avatarBitmap != null) {
+                currentBinding.accountAvatarImage.setImageBitmap(avatarBitmap)
+                currentBinding.accountAvatarImage.visibility = View.VISIBLE
+                currentBinding.accountAvatarLabel.visibility = View.GONE
+            } else {
+                currentBinding.accountAvatarImage.visibility = View.GONE
+                currentBinding.accountAvatarLabel.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    private fun downloadAvatarBitmap(avatarUrl: String) =
+        (URL(avatarUrl).openConnection() as HttpURLConnection).run {
+            try {
+                connectTimeout = AVATAR_CONNECT_TIMEOUT_MILLIS
+                readTimeout = AVATAR_READ_TIMEOUT_MILLIS
+                requestMethod = "GET"
+                inputStream.use(BitmapFactory::decodeStream)
+            } finally {
+                disconnect()
+            }
+        }
 
     private fun showRestorePrompt(prompt: AccountRestorePrompt) {
         viewModel.dismissRestorePrompt()
@@ -138,11 +200,15 @@ class AccountFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        avatarLoadJob?.cancel()
+        avatarLoadJob = null
         super.onDestroyView()
         _binding = null
     }
 
     companion object {
         private const val GOOGLE_ACCOUNT_TYPE = "com.google"
+        private const val AVATAR_CONNECT_TIMEOUT_MILLIS = 10_000
+        private const val AVATAR_READ_TIMEOUT_MILLIS = 10_000
     }
 }

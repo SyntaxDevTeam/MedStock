@@ -15,6 +15,11 @@
         <item name="cornerSize">@dimen/radius_lg</item>
     </style>
 
+    <style name="Shape.MedStock.Circle" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
     <style name="Widget.MedStock.Card.Primary" parent="Widget.MaterialComponents.CardView">
         <item name="cardBackgroundColor">@color/surface_card</item>
         <item name="cardCornerRadius">@dimen/radius_md</item>
