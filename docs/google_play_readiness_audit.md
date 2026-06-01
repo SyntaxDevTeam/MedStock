@@ -27,9 +27,9 @@ Zakres: statyczna analiza konfiguracji Android/Gradle, manifestu, funkcji prywat
 | P0 | Release AAB i podpis | ❌ Bloker | `:app:bundleRelease` dochodzi do `:app:signReleaseBundle`, ale kończy się błędem, bo release signing nie ma danych keystore w repo/środowisku. Bez poprawnego AAB nie ma publikacji. |
 | P0 | Health Apps policy | ⚠️ Częściowo domknięte | Aplikacja jest menedżerem domowych zasobów produktów leczniczych i ma teraz w aplikacji oraz dokumentacji jasny disclaimer. Nadal trzeba wypełnić Health apps declaration w Play Console zgodnie z opisem funkcji. |
 | P0 | Prywatność / Data safety | ⚠️ Domknięte repozytoryjnie, wymaga publikacji URL | Dodano politykę prywatności, draft deklaracji Data safety oraz in-app disclosure w Ustawieniach i ekranie Konta. Przed wysyłką do Play trzeba opublikować politykę jako publiczny URL HTML i przepisać deklarację do Play Console. |
-| P1 | Uprawnienia wrażliwe | ⚠️ Wysokie ryzyko review | Manifest deklaruje `USE_EXACT_ALARM`, `SCHEDULE_EXACT_ALARM`, `USE_FULL_SCREEN_INTENT`, `POST_NOTIFICATIONS`, `GET_ACCOUNTS`. Exact alarm i full-screen intent wymagają mocnego uzasadnienia i deklaracji/zgód. |
-| P1 | Release hardening | ⚠️ Do poprawy | `isMinifyEnabled = false` i `isShrinkResources = false` zwiększają rozmiar oraz ułatwiają analizę aplikacji. To nie zawsze blokuje Play, ale jest słabe dla release. |
-| P1 | Numeracja wersji | ⚠️ Do poprawy | `versionName = "0.7.0-R0.1-SNAPSHOT"` wygląda jak build przedprodukcyjny. Play przyjmie technicznie, ale biznesowo i review-wise wygląda niedojrzale. |
+| P1 | Uprawnienia wrażliwe | ⚠️ Częściowo ograniczone | Usunięto martwe `GET_ACCOUNTS` oraz `SCHEDULE_EXACT_ALARM`/`USE_EXACT_ALARM`; harmonogram używa `setAlarmClock`. Nadal zostają `POST_NOTIFICATIONS`, `USE_FULL_SCREEN_INTENT`, `RECEIVE_BOOT_COMPLETED`, `INTERNET` i `ACCESS_NETWORK_STATE`, które muszą być spójnie opisane w Play Console/listingu. |
+| P1 | Release hardening | ✅ Domknięte w konfiguracji | Release ma włączone R8 minification i shrink resources. Do finalnego potwierdzenia zostaje build podpisanego AAB na właściwym upload keystore. |
+| P1 | Numeracja wersji | ✅ Domknięte | `versionName` zmieniono z wartości snapshotowej na `0.7.0`. |
 | P2 | 64-bit i 16 KB page size | ✅ OK według APK debug | W debug APK nie wykryto `.so`, więc według wytycznych Google aplikacja Kotlin/Java bez native libs spełnia 64-bit i 16 KB page-size od strony binarnej. Trzeba potwierdzić na finalnym release AAB. |
 | P2 | Target API | ✅ OK | `targetSdk = 36`, czyli powyżej wymogu Android 15/API 35 dla nowych aplikacji i update’ów. |
 
@@ -99,24 +99,22 @@ Rekomendacje pozostające przed review:
 
 ### 5. Uprawnienia i wrażliwe API
 
-Manifest deklaruje szeroki zestaw uprawnień: internet, stan sieci, konto Google do Android 25, powiadomienia, exact alarms, odbiór boot completed, full-screen intent i wibracje.
+Manifest po poprawce deklaruje: internet, stan sieci, powiadomienia, odbiór boot completed, full-screen intent i wibracje.
 
-Największe ryzyka:
+Stan po poprawce:
 
-- `USE_EXACT_ALARM`: Google traktuje to jako wysoko ograniczone uprawnienie dla aplikacji, których podstawową funkcją są alarmy/timery/kalendarze. MedStock ma przypomnienia leków jako funkcję krytyczną, ale nie jest czystym budzikiem. To wymaga ostrożnego opisu core functionality i deklaracji. Jeżeli Play uzna, że use case nie pasuje, publikacja może zostać zablokowana.
-- `SCHEDULE_EXACT_ALARM`: alternatywa z zgodą użytkownika; nadal wymaga UX fallbacku.
-- `USE_FULL_SCREEN_INTENT`: dla Android 14+ auto-grant tylko dla alarmów i połączeń. Aplikacja ma ekran dzwonienia przypomnienia o leku, więc argument istnieje, ale trzeba mieć jasny UX zgody i deklarację w Play Console.
-- `GET_ACCOUNTS` z `maxSdkVersion=25`: legacy ograniczone do starych urządzeń; minSdk to 31, więc to uprawnienie jest obecnie martwe i powinno zostać usunięte dla czystości manifestu.
+- Usunięto martwe `GET_ACCOUNTS`, bo `minSdk = 31` czyniło `maxSdkVersion=25` bezużytecznym.
+- Usunięto `SCHEDULE_EXACT_ALARM` i `USE_EXACT_ALARM`, bo aktualny kod harmonogramu używa `AlarmManager.setAlarmClock`, a nie `setExact*`; to zmniejsza ryzyko deklaracji Restricted Permissions w Google Play.
+- `USE_FULL_SCREEN_INTENT` nadal zostaje, bo aplikacja ma ekran dzwonienia dla alarmów produktów leczniczych. To nadal wymaga spójnego UX i opisu w Play Console/listingu.
+- `POST_NOTIFICATIONS` i `RECEIVE_BOOT_COMPLETED` są funkcjonalnie uzasadnione alertami i odtwarzaniem harmonogramu po restarcie urządzenia.
 
-Ocena: **wysokie ryzyko review, częściowo do uproszczenia**.
+Ocena: **ryzyko znacząco ograniczone, ale nie wyzerowane**.
 
-Rekomendacje:
+Rekomendacje pozostające przed review:
 
-1. Usunąć `GET_ACCOUNTS`, bo `minSdk = 31` czyni `maxSdkVersion=25` bezużytecznym.
-2. Zdecydować, czy naprawdę potrzebne są oba `USE_EXACT_ALARM` i `SCHEDULE_EXACT_ALARM`.
-3. Jeśli zostaje `USE_EXACT_ALARM`, przygotować w Play Console opis core functionality: terminowe alerty magazynowe i przypomnienia o kończących się zapasach produktów leczniczych na podstawie danych wpisanych przez użytkownika.
-4. W opisie sklepu jawnie promować ewidencję, kontrolę zapasów, terminy ważności i alerty kończących się zapasów jako core feature, ale bez sugerowania, że aplikacja ustala dawkowanie lub prowadzi terapię.
-5. Utrzymać fallback w aplikacji, gdy użytkownik nie udzieli zgód na powiadomienia/full-screen/exact alarm.
+1. W Play Console opisać `USE_FULL_SCREEN_INTENT` jako alarmowy ekran przypomnienia/alertu, nie jako funkcję marketingową lub komunikacyjną.
+2. W opisie sklepu jawnie promować ewidencję, kontrolę zapasów, terminy ważności i alerty kończących się zapasów jako core feature, ale bez sugerowania, że aplikacja ustala dawkowanie lub prowadzi terapię.
+3. Utrzymać fallback w aplikacji, gdy użytkownik nie udzieli zgód na powiadomienia/full-screen intent.
 
 ### 6. 64-bit i 16 KB page-size
 
@@ -146,16 +144,15 @@ Ocena: **wymaga disclosure**.
 
 ### 9. Jakość release i hardening
 
-Release ma wyłączone `isMinifyEnabled` i `isShrinkResources`. To nie musi być automatyczny blocker Google Play, ale dla aplikacji zdrowotnej operującej na wrażliwych danych to słaby standard produkcyjny.
+Release ma teraz włączone `isMinifyEnabled = true` i `isShrinkResources = true`. To poprawia rozmiar oraz podstawowe utwardzenie artefaktu produkcyjnego.
 
-Ocena: **do poprawy przed produkcją**.
+Ocena: **domknięte w konfiguracji**.
 
-Rekomendacje:
+Rekomendacje pozostające przed produkcją:
 
-1. Włączyć R8 minification dla release.
-2. Włączyć shrink resources.
-3. Dodać reguły ProGuard dla bibliotek, które tego wymagają.
-4. Przetestować import rejestrów i Google Drive po minifikacji.
+1. Zbudować podpisany release AAB na właściwym upload keystore.
+2. Przetestować import rejestrów, skanowanie kodów, Google Drive backup/restore i alarmy po minifikacji.
+3. Jeśli R8 ujawni problemy bibliotek Apache POI lub Google Auth, dopisać minimalne reguły keep zamiast wyłączać minifikację globalnie.
 
 ## Walidacja wykonana lokalnie
 
@@ -167,16 +164,15 @@ Rekomendacje:
 | `./gradlew --no-daemon :app:assembleDebug` | ✅ | Build debug zakończony sukcesem. |
 | `./gradlew --no-daemon :app:lintDebug` | ✅ | Lint debug zakończony sukcesem. |
 | `./gradlew test --console=plain --no-daemon` | ✅ | Testy jednostkowe zakończone sukcesem. |
-| `./gradlew --no-daemon :app:bundleRelease --console=plain` | ❌ | Build doszedł do podpisywania i padł na `:app:signReleaseBundle`; release signing nie jest gotowy. |
+| `./gradlew --no-daemon :app:bundleRelease --console=plain` z tymczasowym lokalnym upload keystore | ✅ | Release AAB z R8 minify/shrink przechodzi technicznie; tymczasowy keystore nie jest commitowany. |
+| `./gradlew --no-daemon :app:bundleRelease --console=plain` bez `keystore.properties` | ⚠️ | Build kończy się kontrolowanym, czytelnym błędem: trzeba dostarczyć `keystore.properties` na podstawie `keystore.properties.example`. |
 | `zipinfo -1 app/build/outputs/apk/debug/app-debug.apk | rg '\.so$|^lib/' || true` | ✅ | Brak native libs w APK debug. |
 
 ## Minimalny plan naprawczy przed wrzuceniem do Google Play
 
 1. **Napraw release signing i AAB**
-   - Przygotuj upload keystore poza repo.
-   - Dodaj `keystore.properties.example`.
-   - Dodaj czytelny fail-fast dla release bez keystore.
-   - Wygeneruj finalny AAB: `./gradlew --no-daemon :app:bundleRelease`.
+   - Wykonane w repo: dodano `keystore.properties.example` i czytelny fail-fast dla release bez `keystore.properties`.
+   - Po Twojej stronie: przygotuj upload keystore poza repo i wygeneruj finalny AAB: `./gradlew --no-daemon :app:bundleRelease`.
 
 2. **Opublikuj compliance health/privacy poza repozytorium**
    - Repozytorium zawiera już politykę prywatności, Data safety draft, in-app disclosure i medyczny disclaimer.
@@ -188,16 +184,16 @@ Rekomendacje:
    - Permissions declarations: exact alarm/full-screen intent, jeśli zostają.
 
 4. **Uprość manifest**
-   - Usuń martwe `GET_ACCOUNTS`.
-   - Zweryfikuj, czy potrzebne są jednocześnie `USE_EXACT_ALARM` i `SCHEDULE_EXACT_ALARM`.
+   - Wykonane: usunięto martwe `GET_ACCOUNTS` oraz `USE_EXACT_ALARM`/`SCHEDULE_EXACT_ALARM`.
+   - Pozostaje: opisać `USE_FULL_SCREEN_INTENT` i powiadomienia w Play Console/listingu.
 
 5. **Utwardź release**
-   - Włącz minify i shrink resources.
-   - Przetestuj krytyczne ścieżki po R8.
+   - Wykonane: włączono minify i shrink resources.
+   - Pozostaje: przetestować krytyczne ścieżki po R8 na podpisanym AAB.
 
 6. **Zmień wersję na produkcyjną**
-   - Nie publikuj `0.7.0-R0.1-SNAPSHOT` jako produkcji.
-   - Ustal semver/release naming, np. `1.0.0` albo `0.7.0` bez snapshot, zależnie od strategii.
+   - Wykonane: `versionName` ustawiono na `0.7.0` bez sufiksu snapshot.
+   - Pozostaje: przed każdą publikacją zwiększać `versionCode`.
 
 ## Szczera konkluzja
 
