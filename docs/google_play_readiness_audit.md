@@ -18,15 +18,15 @@ Zakres: statyczna analiza konfiguracji Android/Gradle, manifestu, funkcji prywat
 
 ## Werdykt końcowy
 
-**Aplikacja nie jest jeszcze gotowa do produkcyjnego dodania do Google Play.** Kod przechodzi debug build, lint i testy jednostkowe, a konfiguracja `targetSdk = 36` spełnia aktualny próg target API. Blokery publikacyjne są jednak realne: release bundle nie podpisuje się w obecnym środowisku, release ma wyłączone minifikację i shrink zasobów, wersja nadal wygląda jak snapshot, a dla aplikacji o lekach brakuje repozytoryjnie uchwyconych elementów compliance: polityki prywatności, jasnego medycznego disclaimera oraz przygotowania deklaracji Health/Data safety/permissions w Play Console.
+**Aplikacja nie jest jeszcze gotowa do produkcyjnego dodania do Google Play.** Kod przechodzi debug build, lint i testy jednostkowe, a konfiguracja `targetSdk = 36` spełnia aktualny próg target API. Ważna korekta pozycjonowania: MedStock należy opisywać jako **menedżer domowych zasobów produktów**, w którym konkretną obsługiwaną kategorią są produkty lecznicze, a nie jako aplikację doradztwa medycznego. To jest lepsze i zgodne z README, ale nie usuwa obowiązków Google Play: aplikacja nadal przetwarza dane o produktach leczniczych, dawkowaniu wpisanym przez użytkownika oraz alertach terminów ważności i kończących się zapasów, więc wymaga polityki prywatności, ostrożnego disclaimera oraz deklaracji Health/Data safety/permissions w Play Console. Blokery publikacyjne pozostają realne: release bundle nie podpisuje się w obecnym środowisku, release ma wyłączone minifikację i shrink zasobów, a wersja nadal wygląda jak snapshot.
 
 ## Najważniejsze ryzyka i decyzje
 
 | Priorytet | Obszar | Status | Wniosek |
 |---|---|---:|---|
 | P0 | Release AAB i podpis | ❌ Bloker | `:app:bundleRelease` dochodzi do `:app:signReleaseBundle`, ale kończy się błędem, bo release signing nie ma danych keystore w repo/środowisku. Bez poprawnego AAB nie ma publikacji. |
-| P0 | Health Apps policy | ❌ Bloker procesowy | Aplikacja zarządza lekami, dawkami, przypomnieniami i zapasami, więc wchodzi w kategorię Health/Medical, w praktyce „Medication and Treatment Management”. Trzeba uzupełnić Health apps declaration i dodać jasny disclaimer. |
-| P0 | Prywatność / Data safety | ❌ Bloker procesowy | Aplikacja zapisuje listę leków, dawkowanie, przypomnienia i email konta w snapshocie Google Drive. Nie znaleziono polityki prywatności ani tekstu/linku w aplikacji. |
+| P0 | Health Apps policy | ❌ Bloker procesowy | Aplikacja jest menedżerem domowych zasobów produktów leczniczych: ewidencjonuje leki, stany, ważność i zapasy na podstawie dawkowania wpisanego przez użytkownika. Nie doradza medycznie ani nie ustala dawkowania, ale nadal dotyka danych i funkcji zdrowotnych, więc trzeba uzupełnić Health apps declaration i dodać jasny disclaimer. |
+| P0 | Prywatność / Data safety | ❌ Bloker procesowy | Aplikacja zapisuje listę produktów leczniczych, dawkowanie podane przez użytkownika, terminy ważności, alerty zapasów, stany magazynowe i email konta w snapshocie Google Drive. Nie znaleziono polityki prywatności ani tekstu/linku w aplikacji. |
 | P1 | Uprawnienia wrażliwe | ⚠️ Wysokie ryzyko review | Manifest deklaruje `USE_EXACT_ALARM`, `SCHEDULE_EXACT_ALARM`, `USE_FULL_SCREEN_INTENT`, `POST_NOTIFICATIONS`, `GET_ACCOUNTS`. Exact alarm i full-screen intent wymagają mocnego uzasadnienia i deklaracji/zgód. |
 | P1 | Release hardening | ⚠️ Do poprawy | `isMinifyEnabled = false` i `isShrinkResources = false` zwiększają rozmiar oraz ułatwiają analizę aplikacji. To nie zawsze blokuje Play, ale jest słabe dla release. |
 | P1 | Numeracja wersji | ⚠️ Do poprawy | `versionName = "0.7.0-R0.1-SNAPSHOT"` wygląda jak build przedprodukcyjny. Play przyjmie technicznie, ale biznesowo i review-wise wygląda niedojrzale. |
@@ -61,9 +61,11 @@ Rekomendacje:
 3. Rozważyć fail-fast w Gradle: jeśli budowany jest release i brakuje keystore, zwracać czytelny błąd zamiast NPE.
 4. Po skonfigurowaniu uruchomić `./gradlew --no-daemon :app:bundleRelease` i sprawdzić wygenerowany `.aab` w Play Console internal testing.
 
-### 3. Health/Medical policy
+### 3. Health/Medical policy i właściwe pozycjonowanie produktu
 
-Opis projektu mówi wprost, że aplikacja pomaga w ewidencji leków, kontrolowaniu zapasów, przypominaniu o dawkach i terminach ważności. To nie jest neutralna aplikacja narzędziowa; to aplikacja zdrowotna z funkcjami medication/treatment management. Google wymaga dla takich aplikacji deklaracji Health apps, polityki prywatności, a dla nieregulowanych aplikacji medycznych jasnego disclaimera, że aplikacja nie jest wyrobem medycznym i nie diagnozuje, nie leczy, nie zapobiega ani nie zapobiega chorobom; dodatkowo ma przypominać o konsultacji z pracownikiem ochrony zdrowia.
+Opis projektu mówi wprost, że aplikacja **nie ma doradzać medycznie ani samodzielnie ustalać dawkowania**. Ma pomagać w ewidencji leków, kontrolowaniu stanów magazynowych, terminów ważności i kończących się zapasów na podstawie dawkowania wpisanego przez użytkownika. Dlatego właściwe pozycjonowanie produktu to: **menedżer domowych zasobów produktów, które w tym przypadku są produktami leczniczymi**. To rozróżnienie jest ważne: w materiałach sklepowych i UI nie należy sugerować diagnozowania, leczenia, optymalizacji terapii, rekomendowania dawek ani oceny bezpieczeństwa medycznego.
+
+Jednocześnie szczera ocena jest taka: samo nazwanie aplikacji „menedżerem zasobów” nie wystarczy, żeby wyjść poza zainteresowanie Google Play politykami zdrowotnymi. Aplikacja nadal operuje na produktach leczniczych, dawkowaniu wpisanym przez użytkownika, terminach ważności, stanach magazynowych i alertach kończących się zapasów. W praktyce należy przygotować Health apps declaration oraz jasny disclaimer, że aplikacja nie jest wyrobem medycznym, nie diagnozuje, nie leczy, nie zapobiega chorobom i nie ustala dawkowania; użytkownik odpowiada za poprawność wpisanych danych, a decyzje medyczne powinny być konsultowane z lekarzem lub farmaceutą.
 
 W repozytorium nie znaleziono tekstu privacy policy ani medycznego disclaimera (`rg "privacy|prywat|policy|polityka|disclaimer|medical device|wyrób medyczny|lekarz|healthcare|professional|konsult" .`).
 
@@ -72,18 +74,18 @@ Ocena: **bloker procesowy przed review**.
 Rekomendacje:
 
 1. W aplikacji dodać ekran/sekcję „Informacje prawne” lub „Prywatność i bezpieczeństwo”.
-2. Dodać stringi EN/PL z disclaimerem, np. sens: „MedStock nie jest wyrobem medycznym, nie diagnozuje, nie leczy, nie zapobiega chorobom ani ich nie monitoruje w celu medycznym. W sprawach dawkowania, diagnozy i leczenia skonsultuj się z lekarzem/farmaceutą.”
+2. Dodać stringi EN/PL z disclaimerem, np. sens: „MedStock jest menedżerem domowych zasobów produktów leczniczych. Nie jest wyrobem medycznym, nie diagnozuje, nie leczy, nie zapobiega chorobom, nie rekomenduje leków i nie ustala dawkowania. Dawkowanie i dane produktów wpisuje użytkownik. W sprawach dawkowania, diagnozy i leczenia skonsultuj się z lekarzem lub farmaceutą.”
 3. Tę samą treść umieścić w opisie Google Play, nie tylko w aplikacji.
-4. W Play Console zadeklarować kategorię zdrowotną zgodną z funkcjami: najpewniej `Medication and Treatment Management`.
-5. Unikać marketingowych claimów typu „poprawia leczenie”, „zapobiega pominięciu dawki”, „bezpieczne dawkowanie”, jeśli nie ma podstaw regulacyjnych/klinicznych.
+4. W Play Console zadeklarować kategorię zdrowotną zgodną z faktycznymi funkcjami. Najbliżej jest `Medication and Treatment Management`, ale opis trzeba formułować ostrożnie jako inventory/stock/expiry-alert manager oparty na danych użytkownika, nie jako narzędzie prowadzenia terapii.
+5. Unikać marketingowych claimów typu „poprawia leczenie”, „zapobiega pominięciu dawki”, „bezpieczne dawkowanie”, „optymalizuje terapię” albo „pilnuje poprawności dawek”, jeśli nie ma podstaw regulacyjnych/klinicznych.
 
 ### 4. Data safety, dane użytkownika i polityka prywatności
 
-Aplikacja tworzy snapshot backupu zawierający email konta, listę leków, moc, substancję czynną, stan, dawkowanie, progi alertów, godziny przypomnień, etykiety i powiązania leków z reminderami. Snapshot jest zapisywany lokalnie i wysyłany do Google Drive `appDataFolder` po autoryzacji użytkownika.
+Aplikacja tworzy snapshot backupu zawierający email konta, listę produktów leczniczych, moc, substancję czynną, stan magazynowy, dawkowanie wpisane przez użytkownika, progi alertów, terminy/godziny alertów, etykiety i powiązania produktów z reminderami. Snapshot jest zapisywany lokalnie i wysyłany do Google Drive `appDataFolder` po autoryzacji użytkownika.
 
 To oznacza co najmniej deklaracje Data safety dla:
 
-- Health info / medication-related user data.
+- Health info / medication-related user data, nawet jeśli funkcja jest pozycjonowana jako domowa ewidencja zasobów, bo dane dotyczą produktów leczniczych i dawkowania wpisanego przez użytkownika.
 - Personal info / email address lub account identifiers.
 - App activity/settings, jeśli ujmowane są preferencje.
 - Data transmitted off-device do Google Drive po akcji/zgodzie użytkownika.
@@ -115,8 +117,8 @@ Rekomendacje:
 
 1. Usunąć `GET_ACCOUNTS`, bo `minSdk = 31` czyni `maxSdkVersion=25` bezużytecznym.
 2. Zdecydować, czy naprawdę potrzebne są oba `USE_EXACT_ALARM` i `SCHEDULE_EXACT_ALARM`.
-3. Jeśli zostaje `USE_EXACT_ALARM`, przygotować w Play Console opis core functionality: terminowe alarmy dawki leku jako podstawowa funkcja bezpieczeństwa użytkownika.
-4. W opisie sklepu jawnie promować przypomnienia leków jako core feature, bo Google wymaga spójności między listingiem a uprawnieniami.
+3. Jeśli zostaje `USE_EXACT_ALARM`, przygotować w Play Console opis core functionality: terminowe alerty magazynowe i przypomnienia o kończących się zapasach produktów leczniczych na podstawie danych wpisanych przez użytkownika.
+4. W opisie sklepu jawnie promować ewidencję, kontrolę zapasów, terminy ważności i alerty kończących się zapasów jako core feature, ale bez sugerowania, że aplikacja ustala dawkowanie lub prowadzi terapię.
 5. Utrzymać fallback w aplikacji, gdy użytkownik nie udzieli zgód na powiadomienia/full-screen/exact alarm.
 
 ### 6. 64-bit i 16 KB page-size
@@ -141,7 +143,7 @@ Ocena: **bez blokera**.
 
 ### 8. Backup i retencja danych
 
-`backup_rules.xml` i `data_extraction_rules.xml` obejmują plik `drive_backup/medstock_medications_backup.json`. To oznacza, że backup aplikacji może przenosić właśnie snapshot danych leków. Jest to spójne funkcjonalnie, ale wymaga przejrzystego disclosure w privacy policy i Data safety. Użytkownik musi rozumieć, że w backupie znajdują się dane o lekach.
+`backup_rules.xml` i `data_extraction_rules.xml` obejmują plik `drive_backup/medstock_medications_backup.json`. To oznacza, że backup aplikacji może przenosić właśnie snapshot danych produktów leczniczych. Jest to spójne funkcjonalnie, ale wymaga przejrzystego disclosure w privacy policy i Data safety. Użytkownik musi rozumieć, że w backupie znajdują się dane o lekach.
 
 Ocena: **wymaga disclosure**.
 
@@ -182,12 +184,12 @@ Rekomendacje:
 2. **Dodaj compliance health/privacy w aplikacji i store listing**
    - Ekran/link polityki prywatności.
    - EN/PL medyczny disclaimer.
-   - Informacja o Google Drive backupie i danych leków.
+   - Informacja o Google Drive backupie i danych produktów leczniczych.
    - Opis usuwania danych i wyłączania backupu.
 
 3. **Przygotuj deklaracje Play Console**
-   - Health apps declaration: Medication and Treatment Management.
-   - Data safety: health info, personal info/email, backup/cloud transfer, optionality.
+   - Health apps declaration: najbliższa kategoria `Medication and Treatment Management`, opisana jako ewidencja/stock/expiry-alert manager oparty na danych użytkownika.
+   - Data safety: medication-related health info, dawkowanie wpisane przez użytkownika, personal info/email, backup/cloud transfer, optionality.
    - Permissions declarations: exact alarm/full-screen intent, jeśli zostają.
 
 4. **Uprość manifest**
@@ -204,4 +206,4 @@ Rekomendacje:
 
 ## Szczera konkluzja
 
-Założenie „wszystkie funkcje są wdrożone, więc aplikacja jest gotowa do sklepu” jest fałszywe. Funkcjonalna kompletność to tylko jeden wymiar. Dla Google Play równie ważne są: podpisywanie, deklaracje danych, polityka zdrowotna, zgodność uprawnień z listingiem, finalny AAB i proces testów. Na dziś projekt jest dobry jako build debug i kandydat do dalszego przygotowania, ale nie jako paczka gotowa do produkcyjnego review.
+Założenie „wszystkie funkcje są wdrożone, więc aplikacja jest gotowa do sklepu” jest fałszywe. Funkcjonalna kompletność to tylko jeden wymiar. Masz rację, że produkt należy pozycjonować jako menedżer domowych zasobów produktów leczniczych, a nie aplikację medycznego doradztwa. Ale nie wolno wyciągać z tego zbyt wygodnego wniosku, że Google Play potraktuje dane o lekach i dawkowaniu jak zwykłą listę zakupów. Dla review równie ważne są: podpisywanie, deklaracje danych, polityka zdrowotna, zgodność uprawnień z listingiem, finalny AAB i proces testów. Na dziś projekt jest dobry jako build debug i kandydat do dalszego przygotowania, ale nie jako paczka gotowa do produkcyjnego review.
