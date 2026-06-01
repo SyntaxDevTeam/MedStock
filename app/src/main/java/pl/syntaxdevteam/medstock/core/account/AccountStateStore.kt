@@ -1,6 +1,7 @@
 package pl.syntaxdevteam.medstock.core.account
 
 import android.content.Context
+import android.content.SharedPreferences
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -18,23 +19,34 @@ class AccountStateStore(context: Context) {
             isConnected = isConnected,
             email = email,
             avatarLabel = AccountAvatarFormatter.avatarLabel(email),
+            avatarUrl = preferences.getString(KEY_AVATAR_URL, null)?.takeIf { isConnected && it.isNotBlank() },
             driveBackupEnabled = driveBackupEnabled,
             lastBackupEpochMillis = lastBackupEpochMillis,
         )
     }
 
-    fun connect(email: String) {
+    fun connect(email: String, avatarUrl: String? = null) {
         val normalizedEmail = email.trim()
         if (normalizedEmail.isBlank()) return
         preferences.edit()
             .putString(KEY_EMAIL, normalizedEmail)
             .putBoolean(KEY_DRIVE_BACKUP_ENABLED, preferences.getBoolean(KEY_DRIVE_BACKUP_ENABLED, false))
+            .applyAvatarUrl(avatarUrl)
+            .apply()
+    }
+
+    fun setAvatarUrl(email: String, avatarUrl: String?) {
+        val normalizedEmail = email.trim()
+        if (normalizedEmail.isBlank() || !getState().email.equals(normalizedEmail, ignoreCase = true)) return
+        preferences.edit()
+            .applyAvatarUrl(avatarUrl)
             .apply()
     }
 
     fun disconnect() {
         preferences.edit()
             .remove(KEY_EMAIL)
+            .remove(KEY_AVATAR_URL)
             .putBoolean(KEY_DRIVE_BACKUP_ENABLED, false)
             .remove(KEY_LAST_BACKUP_EPOCH_MILLIS)
             .apply()
@@ -53,9 +65,19 @@ class AccountStateStore(context: Context) {
             .apply()
     }
 
+    private fun SharedPreferences.Editor.applyAvatarUrl(avatarUrl: String?): SharedPreferences.Editor {
+        val normalizedAvatarUrl = avatarUrl?.trim().orEmpty()
+        return if (normalizedAvatarUrl.isBlank()) {
+            remove(KEY_AVATAR_URL)
+        } else {
+            putString(KEY_AVATAR_URL, normalizedAvatarUrl)
+        }
+    }
+
     companion object {
         private const val PREFS_NAME = "account_state"
         private const val KEY_EMAIL = "email"
+        private const val KEY_AVATAR_URL = "avatar_url"
         private const val KEY_DRIVE_BACKUP_ENABLED = "drive_backup_enabled"
         private const val KEY_LAST_BACKUP_EPOCH_MILLIS = "last_backup_epoch_millis"
     }
@@ -65,6 +87,7 @@ data class AccountState(
     val isConnected: Boolean,
     val email: String,
     val avatarLabel: String,
+    val avatarUrl: String?,
     val driveBackupEnabled: Boolean,
     val lastBackupEpochMillis: Long?,
 ) {

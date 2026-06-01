@@ -279,5 +279,7 @@ Select an existing medication to update, or add this as a separate list entry.</
     <string name="account_drive_restore_success_message">Backup restored.</string>
     <string name="account_drive_restore_failed_message">Could not restore backup.</string>
     <string name="account_drive_authorization_required_message">Google Drive access confirmation is required.</string>
+    <string name="account_google_authorization_required_message">Google account profile access confirmation is required.</string>
     <string name="account_drive_authorization_cancelled_message">Google Drive access was not granted.</string>
+    <string name="account_google_avatar_content_description">Google account avatar</string>
 </resources>

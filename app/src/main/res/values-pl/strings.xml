@@ -279,5 +279,7 @@ Wybierz istniejący lek do aktualizacji albo dodaj ten wpis jako osobny lek.</st
     <string name="account_drive_restore_success_message">Kopia została przywrócona.</string>
     <string name="account_drive_restore_failed_message">Nie udało się przywrócić kopii.</string>
     <string name="account_drive_authorization_required_message">Wymagane jest potwierdzenie dostępu do Google Drive.</string>
+    <string name="account_google_authorization_required_message">Wymagane jest potwierdzenie dostępu do profilu konta Google.</string>
     <string name="account_drive_authorization_cancelled_message">Nie przyznano dostępu do Google Drive.</string>
+    <string name="account_google_avatar_content_description">Awatar konta Google</string>
 </resources>

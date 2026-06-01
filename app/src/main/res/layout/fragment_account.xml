@@ -45,16 +45,34 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/account_avatar_label"
+                    <FrameLayout
                         android:layout_width="64dp"
-                        android:layout_height="64dp"
-                        android:background="@drawable/bg_account_avatar"
-                        android:gravity="center"
-                        android:textColor="@color/green_900"
-                        android:textSize="28sp"
-                        android:textStyle="bold"
-                        tools:text="S" />
+                        android:layout_height="64dp">
+
+                        <TextView
+                            android:id="@+id/account_avatar_label"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/bg_account_avatar"
+                            android:gravity="center"
+                            android:textColor="@color/green_900"
+                            android:textSize="28sp"
+                            android:textStyle="bold"
+                            tools:text="S" />
+
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/account_avatar_image"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:contentDescription="@string/account_google_avatar_content_description"
+                            android:scaleType="centerCrop"
+                            android:visibility="gone"
+                            app:shapeAppearanceOverlay="@style/Shape.MedStock.Circle"
+                            app:strokeColor="@color/green_700"
+                            app:strokeWidth="2dp"
+                            tools:src="@tools:sample/avatars"
+                            tools:visibility="visible" />
+                    </FrameLayout>
 
                     <LinearLayout
                         android:layout_width="0dp"

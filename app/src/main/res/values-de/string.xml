@@ -251,6 +251,7 @@ Wähle ein vorhandenes Arzneimittel zur Aktualisierung oder füge diesen Eintrag
     <string name="account_google_disconnected_status">Verbinde ein Google-Konto, um Backup-Optionen in Drive zu aktivieren.</string>
     <string name="account_google_connected_status">Verbunden als %1$s</string>
     <string name="account_google_connected_message">Das Google-Konto wurde verbunden.</string>
+    <string name="account_google_authorization_required_message">Die Bestätigung des Zugriffs auf das Google-Kontoprofil ist erforderlich.</string>
     <string name="account_google_disconnected_message">Das Google-Konto wurde getrennt.</string>
     <string name="account_google_no_account_selected">Kein Google-Konto ausgewählt.</string>
     <string name="account_disconnect_dialog_title">Google-Konto trennen?</string>
@@ -264,6 +265,7 @@ Wähle ein vorhandenes Arzneimittel zur Aktualisierung oder füge diesen Eintrag
     <string name="account_drive_disabled_message">Das Backup in Google Drive wurde deaktiviert.</string>
     <string name="account_drive_snapshot_created_message">Die Kopie der Arzneimittel, Alarme und Einstellungen wurde vorbereitet.</string>
     <string name="account_drive_snapshot_failed_message">Die Kopie der App-Daten konnte nicht vorbereitet werden.</string>
+    <string name="account_drive_snapshot_uploaded_message">Die Sicherung wurde in Google Drive hochgeladen.</string>
     <string name="account_drive_status_connect_first">Das Backup in Google Drive ist nach dem Verbinden eines Google-Kontos verfügbar.</string>
     <string name="account_drive_status_enabled">Das Backup in Google Drive ist aktiviert. Arzneimittel-, Alarm- und Einstellungsdaten werden zur Synchronisierung vorbereitet.</string>
     <string name="account_drive_status_enabled_with_date">Das Backup in Google Drive ist aktiviert. \nLetzte Datensicherung: %1$s.</string>
@@ -275,4 +277,7 @@ Wähle ein vorhandenes Arzneimittel zur Aktualisierung oder füge diesen Eintrag
     <string name="account_drive_restore_no_backup_message">Keine frühere Sicherung für dieses Google-Konto gefunden.</string>
     <string name="account_drive_restore_success_message">Die Sicherung wurde wiederhergestellt.</string>
     <string name="account_drive_restore_failed_message">Die Sicherung konnte nicht wiederhergestellt werden.</string>
+    <string name="account_drive_authorization_cancelled_message">Der Zugriff auf Google Drive wurde nicht gewährt.</string>
+    <string name="account_drive_authorization_required_message">Die Bestätigung des Zugriffs auf Google Drive ist erforderlich.</string>
+    <string name="account_google_avatar_content_description">Google-Konto-Avatar</string>
 </resources>
