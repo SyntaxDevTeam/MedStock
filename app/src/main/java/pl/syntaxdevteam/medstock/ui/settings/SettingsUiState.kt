@@ -3,7 +3,6 @@ package pl.syntaxdevteam.medstock.ui.settings
 import pl.syntaxdevteam.medstock.core.i18n.AppLanguageMode
 import pl.syntaxdevteam.medstock.core.theme.AppColorPalette
 import pl.syntaxdevteam.medstock.core.theme.AppThemeMode
-import pl.syntaxdevteam.medstock.core.theme.AppColorPalette
 
 data class SettingsUiState(
     val versionName: String,
