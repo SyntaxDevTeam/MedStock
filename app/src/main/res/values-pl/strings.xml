@@ -274,7 +274,7 @@ Wybierz istniejący lek do aktualizacji albo dodaj ten wpis jako osobny lek.</st
 
     <string name="account_toolbar_subtitle">Google i kopia w chmurze</string>
     <string name="account_google_title">Konto Google</string>
-    <string name="account_google_summary">Połącz konto, aby używać awatara i kopii w Drive.</string>
+    <string name="account_google_summary">Połącz konto, aby używać zaawansowanych funkcji.</string>
     <string name="account_google_connect_button">Połącz konto Google</string>
     <string name="account_google_disconnect_button">Odłącz konto</string>
     <string name="account_google_not_connected_email">Brak połączonego konta Google</string>
@@ -288,7 +288,7 @@ Wybierz istniejący lek do aktualizacji albo dodaj ten wpis jako osobny lek.</st
     <string name="account_disconnect_dialog_confirm">Odłącz</string>
     <string name="account_drive_title">Kopia w Google Drive</string>
     <string name="account_drive_summary">Automatyczna kopia danych aplikacji w Google Drive.</string>
-    <string name="account_drive_switch_label">Zapisuj kopię danych aplikacji w Google Drive</string>
+    <string name="account_drive_switch_label">Zapisz dane w Google Drive</string>
     <string name="account_drive_backup_now_button">Utwórz kopię danych teraz</string>
     <string name="account_drive_requires_google">Najpierw połącz konto Google.</string>
     <string name="account_drive_disabled_message">Kopia w Google Drive została wyłączona.</string>

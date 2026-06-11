@@ -272,7 +272,7 @@ Wähle ein vorhandenes Arzneimittel zur Aktualisierung oder füge diesen Eintrag
 
     <string name="account_toolbar_subtitle">Google und Cloud-Backup</string>
     <string name="account_google_title">Google-Konto</string>
-    <string name="account_google_summary">Konto verbinden, um Profilbild und Drive-Backup zu verwenden.</string>
+    <string name="account_google_summary">Verbinden Sie Ihr Konto, um erweiterte Funktionen zu nutzen.</string>
     <string name="account_google_connect_button">Google-Konto verbinden</string>
     <string name="account_google_disconnect_button">Konto trennen</string>
     <string name="account_google_not_connected_email">Kein verbundenes Google-Konto</string>
@@ -287,7 +287,7 @@ Wähle ein vorhandenes Arzneimittel zur Aktualisierung oder füge diesen Eintrag
     <string name="account_disconnect_dialog_confirm">Trennen</string>
     <string name="account_drive_title">Backup in Google Drive</string>
     <string name="account_drive_summary">Automatische Sicherung der App-Daten in Google Drive.</string>
-    <string name="account_drive_switch_label">Kopie der App-Daten in Google Drive speichern</string>
+    <string name="account_drive_switch_label">Daten in Google Drive speichern</string>
     <string name="account_drive_backup_now_button">Daten jetzt sichern</string>
     <string name="account_drive_requires_google">Verbinde zuerst ein Google-Konto.</string>
     <string name="account_drive_disabled_message">Das Backup in Google Drive wurde deaktiviert.</string>
