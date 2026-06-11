@@ -63,6 +63,13 @@
         <item name="shapeAppearance">@style/Shape.MedStock.Rounded.Medium</item>
     </style>
 
+    <style name="Widget.MedStock.Switch" parent="Widget.MaterialComponents.CompoundButton.Switch">
+        <item name="showText">false</item>
+        <item name="useMaterialThemeColors">false</item>
+        <item name="thumbTint">@color/med_switch_thumb_tint</item>
+        <item name="trackTint">@color/med_switch_track_tint</item>
+    </style>
+
     <style name="Widget.MedStock.RadioButton.SettingsOption" parent="Widget.MaterialComponents.CompoundButton.RadioButton">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
