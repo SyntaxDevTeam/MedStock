@@ -46,14 +46,15 @@ class SettingsUiResourcesTest {
         val supportStyle = designSystem.substring(styleStart, styleEnd)
 
         assertTrue(supportStyle.contains("""<item name="backgroundTint">?attr/medColorPrimarySoft</item>"""))
-        assertTrue(supportStyle.contains("""<item name="android:textColor">?attr/medColorTextPrimary</item>"""))
+        assertTrue(supportStyle.contains("""<item name="android:textColor">?attr/medColorOnPrimarySoft</item>"""))
+        assertTrue(supportStyle.contains("""<item name="iconTint">?attr/medColorOnPrimarySoft</item>"""))
         listOf(
             File("src/main/res/values/themes.xml"),
             File("src/main/res/values-night/themes.xml")
         ).forEach { themeFile ->
             assertTrue(
                 themeFile.readText().contains(
-                    """<item name="colorOnSecondary">?attr/medColorTextPrimary</item>"""
+                    """<item name="colorOnSecondary">?attr/medColorOnPrimarySoft</item>"""
                 )
             )
         }
