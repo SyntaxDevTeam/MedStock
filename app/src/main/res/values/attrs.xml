@@ -1,7 +1,8 @@
 <resources>
     <attr name="medColorPrimary" format="color|reference" />
     <attr name="medColorPrimaryDark" format="color|reference" />
-    <attr name="medColorPrimaryText" format="color|reference" />
+    <attr name="medColorOnPrimary" format="color|reference" />
+    <attr name="medColorOnPrimarySoft" format="color|reference" />
     <attr name="medColorPrimarySoft" format="color|reference" />
     <attr name="medColorSurface" format="color|reference" />
     <attr name="medColorSurfaceCard" format="color|reference" />

@@ -43,7 +43,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/TextAppearance.Material3.DisplayLarge"
-                    android:textColor="?attr/medColorPrimaryText"
+                    android:textColor="?attr/medColorPrimary"
                     android:textStyle="bold"
                     tools:text="08:30" />
 

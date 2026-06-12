@@ -3,10 +3,10 @@
         <!-- Standard Material Attributes -->
         <item name="colorPrimary">?attr/medColorPrimary</item>
         <item name="colorPrimaryVariant">?attr/medColorTitleBar</item>
-        <item name="colorOnPrimary">?attr/medColorPrimaryText</item>
+        <item name="colorOnPrimary">?attr/medColorOnPrimary</item>
         <item name="colorSecondary">?attr/medColorPrimarySoft</item>
         <item name="colorSecondaryVariant">?attr/medColorPrimaryDark</item>
-        <item name="colorOnSecondary">?attr/medColorTextPrimary</item>
+        <item name="colorOnSecondary">?attr/medColorOnPrimarySoft</item>
         <item name="colorSurface">?attr/medColorSurface</item>
         <item name="colorOnSurface">?attr/medColorTextPrimary</item>
         <item name="android:colorBackground">?attr/medColorSurface</item>
@@ -21,7 +21,8 @@
         <!-- Custom medColor attributes (Default Green Palette) -->
         <item name="medColorPrimary">@color/green_500</item>
         <item name="medColorPrimaryDark">@color/green_700</item>
-        <item name="medColorPrimaryText">@color/green_900</item>
+        <item name="medColorOnPrimary">#102E11</item>
+        <item name="medColorOnPrimarySoft">#19321C</item>
         <item name="medColorPrimarySoft">@color/green_200</item>
         <item name="medColorSurface">@color/surface_light</item>
         <item name="medColorSurfaceCard">@color/surface_card</item>
@@ -52,7 +53,8 @@
     <style name="Theme.MedStock.Ocean.NoActionBar" parent="Theme.MedStock.NoActionBar">
         <item name="medColorPrimary">#1976D2</item>
         <item name="medColorPrimaryDark">#0D47A1</item>
-        <item name="medColorPrimaryText">#0A315D</item>
+        <item name="medColorOnPrimary">#FFFFFF</item>
+        <item name="medColorOnPrimarySoft">#102A43</item>
         <item name="medColorPrimarySoft">#BBDEFB</item>
         <item name="medColorSurface">#F5FAFF</item>
         <item name="medColorSurfaceCard">#FFFFFF</item>
@@ -71,7 +73,8 @@
     <style name="Theme.MedStock.Berry.NoActionBar" parent="Theme.MedStock.NoActionBar">
         <item name="medColorPrimary">#D81B60</item>
         <item name="medColorPrimaryDark">#8E1748</item>
-        <item name="medColorPrimaryText">#5B1534</item>
+        <item name="medColorOnPrimary">#FFFFFF</item>
+        <item name="medColorOnPrimarySoft">#3B1426</item>
         <item name="medColorPrimarySoft">#F8BBD0</item>
         <item name="medColorSurface">#FFF7FA</item>
         <item name="medColorSurfaceCard">#FFFFFF</item>
@@ -90,7 +93,8 @@
     <style name="Theme.MedStock.Sage.NoActionBar" parent="Theme.MedStock.NoActionBar">
         <item name="medColorPrimary">#8FB996</item>
         <item name="medColorPrimaryDark">#5F8265</item>
-        <item name="medColorPrimaryText">#294D31</item>
+        <item name="medColorOnPrimary">#17351D</item>
+        <item name="medColorOnPrimarySoft">#203D26</item>
         <item name="medColorPrimarySoft">#DDEBDF</item>
         <item name="medColorSurface">#F8FCF8</item>
         <item name="medColorSurfaceCard">#FFFFFF</item>
@@ -109,7 +113,8 @@
     <style name="Theme.MedStock.Lavender.NoActionBar" parent="Theme.MedStock.NoActionBar">
         <item name="medColorPrimary">#A78BCE</item>
         <item name="medColorPrimaryDark">#725B9B</item>
-        <item name="medColorPrimaryText">#3F315D</item>
+        <item name="medColorOnPrimary">#2B1D40</item>
+        <item name="medColorOnPrimarySoft">#302244</item>
         <item name="medColorPrimarySoft">#E9DFF5</item>
         <item name="medColorSurface">#FCF9FF</item>
         <item name="medColorSurfaceCard">#FFFFFF</item>

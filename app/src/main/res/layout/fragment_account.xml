@@ -73,7 +73,7 @@
                             android:layout_height="match_parent"
                             android:background="@drawable/bg_account_avatar"
                             android:gravity="center"
-                            android:textColor="?attr/medColorPrimaryText"
+                            android:textColor="?attr/medColorOnPrimary"
                             android:textSize="28sp"
                             android:textStyle="bold"
                             tools:text="S" />

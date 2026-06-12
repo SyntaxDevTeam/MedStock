@@ -5,7 +5,7 @@
         android:color="?medColorSurfaceCard"
         android:state_enabled="false" />
     <item
-        android:color="?medColorPrimaryText"
+        android:color="?medColorOnPrimary"
         android:state_checked="true" />
     <item android:color="?medColorSurfaceCard" />
 </selector>
