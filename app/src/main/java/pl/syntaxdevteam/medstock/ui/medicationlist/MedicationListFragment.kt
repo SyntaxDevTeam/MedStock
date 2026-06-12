@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.color.MaterialColors
 import pl.syntaxdevteam.medstock.R
 import pl.syntaxdevteam.medstock.core.stock.MedicationStockCalculator
 import pl.syntaxdevteam.medstock.core.stock.MedicationStockStatus
@@ -84,28 +85,39 @@ private class MedicationListViewHolder(view: View) : RecyclerView.ViewHolder(vie
         val card = itemView as MaterialCardView
         val strengthSuffix = item.strength.takeIf { it.isNotBlank() }?.let { " ($it)" }.orEmpty()
         val stockInfo = MedicationStockCalculator.calculate(item)
+        val paletteCardBackground = MaterialColors.getColor(card, R.attr.medColorSurfaceCardSoft)
         val status = when (stockInfo.status) {
             MedicationStockStatus.EMPTY -> {
+                val statusColor = ContextCompat.getColor(card.context, R.color.stock_status_empty_stroke)
                 applyStatusCardStyle(
                     card = card,
-                    strokeColor = R.color.stock_status_empty_stroke,
-                    backgroundColor = R.color.stock_status_empty_background
+                    strokeColor = statusColor,
+                    backgroundColor = MaterialColors.layer(
+                        paletteCardBackground,
+                        statusColor,
+                        STATUS_CONTAINER_OVERLAY_ALPHA
+                    )
                 )
                 itemView.context.getString(R.string.medication_stock_status_empty)
             }
             MedicationStockStatus.LOW -> {
+                val statusColor = ContextCompat.getColor(card.context, R.color.stock_status_low_stroke)
                 applyStatusCardStyle(
                     card = card,
-                    strokeColor = R.color.stock_status_low_stroke,
-                    backgroundColor = R.color.stock_status_low_background
+                    strokeColor = statusColor,
+                    backgroundColor = MaterialColors.layer(
+                        paletteCardBackground,
+                        statusColor,
+                        STATUS_CONTAINER_OVERLAY_ALPHA
+                    )
                 )
                 itemView.context.getString(R.string.medication_stock_status_low)
             }
             MedicationStockStatus.OK -> {
                 applyStatusCardStyle(
                     card = card,
-                    strokeColor = R.color.stock_status_ok_stroke,
-                    backgroundColor = R.color.stock_status_ok_background
+                    strokeColor = MaterialColors.getColor(card, R.attr.medColorPrimary),
+                    backgroundColor = paletteCardBackground
                 )
                 itemView.context.getString(R.string.medication_stock_status_ok)
             }
@@ -128,9 +140,12 @@ private class MedicationListViewHolder(view: View) : RecyclerView.ViewHolder(vie
     }
 
     private fun applyStatusCardStyle(card: MaterialCardView, strokeColor: Int, backgroundColor: Int) {
-        val context = card.context
-        card.strokeWidth = context.resources.getDimensionPixelSize(R.dimen.card_stroke)
-        card.strokeColor = ContextCompat.getColor(context, strokeColor)
-        card.setCardBackgroundColor(ContextCompat.getColor(context, backgroundColor))
+        card.strokeWidth = card.resources.getDimensionPixelSize(R.dimen.card_stroke)
+        card.strokeColor = strokeColor
+        card.setCardBackgroundColor(backgroundColor)
+    }
+
+    private companion object {
+        const val STATUS_CONTAINER_OVERLAY_ALPHA = 0.07f
     }
 }

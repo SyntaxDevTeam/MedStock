@@ -37,6 +37,43 @@ class ThemeContrastResourcesTest {
         }
     }
 
+    @Test
+    fun `medication card text meets WCAG AA contrast on palette and status tinted surfaces`() {
+        listOf("values", "values-night").forEach { qualifier ->
+            val colors = readColors(File("src/main/res/$qualifier/colors.xml"))
+            val styles = readStyles(File("src/main/res/$qualifier/themes.xml"))
+            val statusColors = listOf("stock_status_low_stroke", "stock_status_empty_stroke")
+
+            themeNames.forEach { themeName ->
+                val theme = styles.getValue(themeName)
+                val paletteBackground = resolveColor(
+                    theme.getValue("medColorSurfaceCardSoft"),
+                    theme,
+                    colors
+                )
+                val backgrounds = listOf(paletteBackground) + statusColors.map { statusColor ->
+                    layerColors(
+                        background = paletteBackground,
+                        overlay = resolveColor(colors.getValue(statusColor), theme, colors),
+                        overlayAlpha = MEDICATION_STATUS_OVERLAY_ALPHA
+                    )
+                }
+
+                backgrounds.forEachIndexed { index, background ->
+                    listOf("medColorTextPrimary", "medColorTextSecondary").forEach { textAttribute ->
+                        assertContrast(
+                            qualifier = qualifier,
+                            themeName = themeName,
+                            background = background,
+                            foreground = resolveColor(theme.getValue(textAttribute), theme, colors),
+                            role = "medication card surface $index with $textAttribute"
+                        )
+                    }
+                }
+            }
+        }
+    }
+
     private fun assertContrast(
         qualifier: String,
         themeName: String,
@@ -82,6 +119,15 @@ class ThemeContrastResourcesTest {
         else -> error("Unsupported color value: $value")
     }
 
+    private fun layerColors(background: Int, overlay: Int, overlayAlpha: Double): Int {
+        fun channel(shift: Int): Int {
+            val backgroundChannel = (background shr shift) and 0xFF
+            val overlayChannel = (overlay shr shift) and 0xFF
+            return (overlayChannel * overlayAlpha + backgroundChannel * (1.0 - overlayAlpha)).toInt()
+        }
+        return (channel(16) shl 16) or (channel(8) shl 8) or channel(0)
+    }
+
     private fun contrastRatio(first: Int, second: Int): Double {
         val firstLuminance = relativeLuminance(first)
         val secondLuminance = relativeLuminance(second)
@@ -102,6 +148,7 @@ class ThemeContrastResourcesTest {
 
     private companion object {
         const val MINIMUM_NORMAL_TEXT_CONTRAST = 4.5
+        const val MEDICATION_STATUS_OVERLAY_ALPHA = 0.07
         val themeNames = listOf(
             "Theme.MedStock",
             "Theme.MedStock.Ocean.NoActionBar",
