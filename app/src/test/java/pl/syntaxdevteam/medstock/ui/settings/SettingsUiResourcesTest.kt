@@ -14,8 +14,9 @@ class SettingsUiResourcesTest {
         val english = stringResources(File("src/main/res/values/strings.xml"))
         val polish = stringResources(File("src/main/res/values-pl/strings.xml"))
         val german = stringResources(File("src/main/res/values-de/string.xml"))
+        val french = stringResources(File("src/main/res/values-fr/strings.xml"))
 
-        listOf(english, polish, german).forEach { strings ->
+        listOf(english, polish, german, french).forEach { strings ->
             assertTrue(strings.getValue("settings_version_value").contains("%1\$s"))
             assertTrue(strings.getValue("settings_db_date_value").contains("%1\$s"))
             assertTrue(strings.getValue("settings_database_size_value").contains("%1\$s"))
@@ -89,14 +90,29 @@ class SettingsUiResourcesTest {
     }
 
     @Test
-    fun `theme choices use readable vertical radio lists`() {
+    fun `theme and palette choices use toggle buttons like language choices`() {
         val layout = File("src/main/res/layout/fragment_settings.xml").readText()
 
-        assertTrue(layout.contains("<RadioGroup"))
+        assertTrue(layout.contains("MaterialButtonToggleGroup android:id=\"@+id/settings_theme_mode_group\""))
+        assertTrue(layout.contains("MaterialButtonToggleGroup android:id=\"@+id/settings_palette_group\""))
+        assertTrue(layout.contains("MaterialButtonToggleGroup android:id=\"@+id/settings_language_mode_group\""))
         assertTrue(layout.contains("@+id/settings_theme_mode_group"))
         assertTrue(layout.contains("@+id/settings_palette_group"))
-        assertTrue(layout.contains("@style/Widget.MedStock.RadioButton.SettingsOption"))
-        assertTrue(layout.contains("android:orientation=\"vertical\""))
+        assertTrue(layout.contains("app:selectionRequired=\"true\""))
+        assertTrue(layout.contains("app:singleSelection=\"true\""))
+        assertTrue(layout.contains("android:scrollbars=\"none\""))
+    }
+
+    @Test
+    fun `palette choices use colored buttons with checked icons`() {
+        val layout = File("src/main/res/layout/fragment_settings.xml").readText()
+
+        listOf("green", "ocean", "berry", "sage", "lavender").forEach { palette ->
+            assertTrue(layout.contains("@+id/settings_palette_${palette}_button"))
+            assertTrue(layout.contains("app:backgroundTint=\"@color/palette_preview_$palette\""))
+            assertTrue(layout.contains("app:iconTint=\"@color/palette_button_${palette}_check_tint\""))
+        }
+        assertTrue(layout.contains("app:icon=\"@drawable/ic_check_black_24dp\""))
     }
 
     @Test
@@ -125,7 +141,7 @@ class SettingsUiResourcesTest {
         assertTrue(fragment.contains("isRenderingUiState = true"))
         assertTrue(fragment.contains("isRenderingUiState = false"))
         assertTrue(fragment.contains("isViewStateRestored = true"))
-        assertTrue(fragment.contains("if (!canHandlePreferenceChange()) return@setOnCheckedChangeListener"))
+        assertTrue(fragment.contains("if (!isChecked || !canHandlePreferenceChange()) return@addOnButtonCheckedListener"))
         assertTrue(fragment.contains("if (!isChecked || !canHandlePreferenceChange())"))
     }
 
@@ -145,7 +161,8 @@ class SettingsUiResourcesTest {
         listOf(
             File("src/main/res/values/strings.xml"),
             File("src/main/res/values-pl/strings.xml"),
-            File("src/main/res/values-de/string.xml")
+            File("src/main/res/values-de/string.xml"),
+            File("src/main/res/values-fr/strings.xml")
         ).map(::stringResources).forEach { strings ->
             assertTrue(strings.getValue("settings_catalog_view_title").isNotBlank())
             assertTrue(strings.getValue("settings_show_inactive_pharmacies").isNotBlank())

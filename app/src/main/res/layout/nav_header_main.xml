@@ -20,11 +20,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="8dp"
-        android:text="@string/nav_header_title" />
+        android:text="@string/nav_header_title"
+        android:textColor="?attr/medColorTitleBarText" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/nav_header_subtitle" />
+        android:text="@string/nav_header_subtitle"
+        android:textColor="?attr/medColorTitleBarText" />
 </LinearLayout>

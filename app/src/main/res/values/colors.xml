@@ -44,4 +44,9 @@
     <color name="palette_preview_berry">#FFD81B60</color>
     <color name="palette_preview_sage">#FF7FA987</color>
     <color name="palette_preview_lavender">#FFA98DD0</color>
+    <color name="palette_button_green_content">#FF102E11</color>
+    <color name="palette_button_ocean_content">#FFFFFFFF</color>
+    <color name="palette_button_berry_content">#FFFFFFFF</color>
+    <color name="palette_button_sage_content">#FF17351D</color>
+    <color name="palette_button_lavender_content">#FF2B1D40</color>
 </resources>
