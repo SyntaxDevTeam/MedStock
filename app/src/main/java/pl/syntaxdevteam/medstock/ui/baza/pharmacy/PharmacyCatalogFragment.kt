@@ -37,8 +37,7 @@ class PharmacyCatalogFragment : Fragment() {
     private val locationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
-        val granted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
-            permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+        val granted = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
         if (granted) {
             findPharmaciesInCurrentCity()
         } else {
@@ -123,20 +122,15 @@ class PharmacyCatalogFragment : Fragment() {
     }
 
     private fun requestLocationAndFindCity() {
-        val hasFineLocation = ContextCompat.checkSelfPermission(
-            requireContext(),
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
         val hasCoarseLocation = ContextCompat.checkSelfPermission(
             requireContext(),
             Manifest.permission.ACCESS_COARSE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
-        if (hasFineLocation || hasCoarseLocation) {
+        if (hasCoarseLocation) {
             findPharmaciesInCurrentCity()
         } else {
             locationPermissionLauncher.launch(
                 arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 )
             )
