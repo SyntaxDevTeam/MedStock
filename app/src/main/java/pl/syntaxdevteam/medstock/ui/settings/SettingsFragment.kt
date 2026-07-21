@@ -29,7 +29,6 @@ class SettingsFragment : Fragment() {
 
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
-    private var infoTapCount = 0
     private var isRenderingUiState = false
     private var isViewStateRestored = false
     private var isPaletteRecreationPending = false
@@ -111,8 +110,6 @@ class SettingsFragment : Fragment() {
         binding.settingsLanguageHelp.setOnClickListener {
             showHelp(R.string.settings_language_title, R.string.settings_language_help_message)
         }
-        binding.settingsInfoCard.setOnClickListener { handleInfoTap() }
-
         binding.settingsForceUpdateButton.setOnClickListener {
             (activity as? pl.syntaxdevteam.medstock.MainActivity)?.triggerCatalogForceUpdate()
         }
@@ -123,15 +120,6 @@ class SettingsFragment : Fragment() {
         return binding.root
     }
 
-    private fun renderLocalizedAppInfo(state: SettingsUiState) {
-        val info = SettingsInfoFormatter.format(requireContext(), state)
-        binding.settingsAppNameValue.text = info.appName
-        binding.settingsAuthorValue.text = info.author
-        binding.settingsVersionValue.text = info.version
-        binding.settingsLastUpdateValue.text = info.lastDatabaseUpdate
-        binding.settingsDbSizeValue.text = info.databaseSize
-    }
-
     private fun showHelp(titleResId: Int, messageResId: Int) {
         AlertDialog.Builder(requireContext())
             .setTitle(titleResId)
@@ -139,32 +127,6 @@ class SettingsFragment : Fragment() {
             .setPositiveButton(android.R.string.ok, null)
             .show()
     }
-
-    private fun handleInfoTap() {
-        if (DeveloperModeManager.isEnabled(requireContext())) return
-        infoTapCount++
-        binding.settingsInfoCard.removeCallbacks(resetInfoTapCount)
-        binding.settingsInfoCard.postDelayed(resetInfoTapCount, INFO_TAP_TIMEOUT_MILLIS)
-        val remaining = REQUIRED_INFO_TAPS - infoTapCount
-        if (remaining <= 0) {
-            DeveloperModeManager.enable(requireContext())
-            binding.settingsDeveloperActions.visibility = View.VISIBLE
-            Toast.makeText(requireContext(), R.string.settings_developer_enabled, Toast.LENGTH_SHORT).show()
-            infoTapCount = 0
-        } else if (infoTapCount >= 2) {
-            Toast.makeText(
-                requireContext(),
-                resources.getQuantityString(
-                    R.plurals.settings_developer_taps_remaining,
-                    remaining,
-                    remaining
-                ),
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-    }
-
-    private val resetInfoTapCount = Runnable { infoTapCount = 0 }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
@@ -176,7 +138,6 @@ class SettingsFragment : Fragment() {
     private fun renderUiState(state: SettingsUiState) {
         isRenderingUiState = true
         try {
-            renderLocalizedAppInfo(state)
             setCheckedThemeMode(state.themeMode)
             setCheckedColorPalette(state.colorPalette)
             setCheckedLanguageMode(state.languageMode)
@@ -245,7 +206,6 @@ class SettingsFragment : Fragment() {
     override fun onDestroyView() {
         isViewStateRestored = false
         isPaletteRecreationPending = false
-        binding.settingsInfoCard.removeCallbacks(resetInfoTapCount)
         super.onDestroyView()
         _binding = null
     }
@@ -280,8 +240,4 @@ class SettingsFragment : Fragment() {
         }
     }
 
-    private companion object {
-        const val REQUIRED_INFO_TAPS = 5
-        const val INFO_TAP_TIMEOUT_MILLIS = 3_000L
-    }
 }

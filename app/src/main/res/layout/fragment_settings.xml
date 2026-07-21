@@ -127,17 +127,6 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <com.google.android.material.card.MaterialCardView android:id="@+id/settings_info_card" style="@style/Widget.MedStock.Card.Primary" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_3" android:clickable="true" android:focusable="true" android:foreground="?attr/selectableItemBackground">
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="@dimen/space_4">
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/settings_info_title" android:textColor="?attr/medColorTextPrimary" android:textStyle="bold" />
-                <TextView android:id="@+id/settings_app_name_value" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_2" android:textColor="?attr/medColorTextSecondary" tools:text="MedStock" />
-                <TextView android:id="@+id/settings_author_value" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="?attr/medColorTextSecondary" tools:text="by WieszczY" />
-                <TextView android:id="@+id/settings_version_value" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="?attr/medColorTextSecondary" tools:text="Version: 1.0" />
-                <TextView android:id="@+id/settings_last_update_value" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="?attr/medColorTextSecondary" tools:text="Database: 2026-05-26" />
-                <TextView android:id="@+id/settings_db_size_value" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="?attr/medColorTextSecondary" tools:text="18 MB" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
         <LinearLayout android:id="@+id/settings_developer_actions" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_3" android:orientation="vertical" android:visibility="gone" tools:visibility="visible">
             <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/settings_developer_title" android:textColor="?attr/medColorTextPrimary" android:textStyle="bold" />
             <com.google.android.material.button.MaterialButton android:id="@+id/settings_force_update_button" style="@style/Widget.MedStock.Button.CtaPrimary" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_2" android:text="@string/settings_force_update_button" />
