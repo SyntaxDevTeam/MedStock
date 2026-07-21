@@ -11,8 +11,8 @@ Niniejsza Polityka Prywatności opisuje, w jaki sposób aplikacja mobilna **MedS
 Wydawcą Aplikacji i podmiotem odpowiedzialnym za jej działanie jest:
 
 **WieszczY (SyntaxDevTeam)**
-Repozytorium i kanał kontaktowy: <https://github.com/SyntaxDevTeam/MedStock_One>
-Kontakt w sprawach prywatności: <https://github.com/SyntaxDevTeam/MedStock_One/issues>
+Repozytorium i kanał kontaktowy: <https://github.com/SyntaxDevTeam/MedStock>
+Kontakt w sprawach prywatności: <https://github.com/SyntaxDevTeam/MedStock/issues>
 
 W zgłoszeniu publicznym nie należy umieszczać informacji o przyjmowanych lekach, dawkowaniu, adresu e-mail, dokładnej lokalizacji ani innych danych wrażliwych. Jeżeli rozpatrzenie zgłoszenia wymaga takich danych, wydawca uzgodni bezpieczniejszy kanał komunikacji.
 
