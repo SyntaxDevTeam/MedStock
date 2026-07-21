@@ -164,6 +164,12 @@ class MainActivity : AppCompatActivity() {
                     binding.appBarMain.fab?.hide()
                 }
 
+                R.id.nav_info -> {
+                    titleToolbar.title = getString(R.string.menu_info)
+                    titleToolbar.subtitle = null
+                    binding.appBarMain.fab?.hide()
+                }
+
                 R.id.nav_help -> {
                     titleToolbar.title = getString(R.string.menu_help)
                     titleToolbar.subtitle = null
@@ -184,6 +190,7 @@ class MainActivity : AppCompatActivity() {
                 destination.id != R.id.nav_reminder_editor &&
                 destination.id != R.id.nav_baza_leki_detail_screen &&
                 destination.id != R.id.nav_account &&
+                destination.id != R.id.nav_info &&
                 destination.id != R.id.nav_help
             ) {
                 binding.appBarMain.fab?.show()
@@ -242,6 +249,7 @@ class MainActivity : AppCompatActivity() {
         R.id.nav_alerty_przypomnienia_screen,
         R.id.nav_account,
         R.id.nav_settings,
+        R.id.nav_info,
         R.id.nav_help,
     )
 
@@ -351,6 +359,7 @@ class MainActivity : AppCompatActivity() {
             R.id.nav_medication_list -> R.id.nav_medication_list
             R.id.nav_account -> R.id.nav_account
             R.id.nav_settings -> R.id.nav_settings
+            R.id.nav_info -> R.id.nav_info
             R.id.nav_help -> R.id.nav_help
             else -> null
         }
@@ -476,6 +485,11 @@ class MainActivity : AppCompatActivity() {
             R.id.nav_settings -> {
                 val navController = findNavController(R.id.nav_host_fragment_content_main)
                 navController.navigate(R.id.nav_settings)
+                return true
+            }
+            R.id.nav_info -> {
+                val navController = findNavController(R.id.nav_host_fragment_content_main)
+                navController.navigate(R.id.nav_info)
                 return true
             }
             R.id.nav_help -> {

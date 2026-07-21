@@ -117,8 +117,7 @@ class MedicationEditorFragment : Fragment() {
             }
         }
         binding.buttonDeleteMedication.setOnClickListener {
-            viewModel.deleteMedication(medicationId)
-            findNavController().navigateUp()
+            showDeleteMedicationConfirmation(medicationId)
         }
         binding.buttonDeleteMedication.visibility = if (isEdit) View.VISIBLE else View.GONE
 
@@ -214,6 +213,21 @@ class MedicationEditorFragment : Fragment() {
         findNavController().navigateUp()
     }
 
+    private fun showDeleteMedicationConfirmation(medicationId: Long) {
+        val medicationName = binding.editTextMedicationName.text.toString()
+            .trim()
+            .ifBlank { getString(R.string.medication_delete_confirmation_unknown) }
+        AlertDialog.Builder(requireContext())
+            .setTitle(R.string.medication_delete_confirmation_title)
+            .setMessage(getString(R.string.medication_delete_confirmation_message, medicationName))
+            .setPositiveButton(R.string.medication_delete_confirmation_confirm) { _, _ ->
+                viewModel.deleteMedication(medicationId)
+                findNavController().navigateUp()
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
+    }
+
     override fun onDestroyView() {
         suggestionJob?.cancel()
         barcodeLookupJob?.cancel()
@@ -226,7 +240,7 @@ class MedicationEditorFragment : Fragment() {
         fillFromCatalogSuggestion(selected)
     }
 
-    private fun fillFromCatalogSuggestion(selected: MedicationCatalogSuggestion) {
+    private fun fillFromCatalogSuggestion(selected: MedicationCatalogSuggestion, fillStockFromPackage: Boolean = false) {
         binding.editTextMedicationName.setText(selected.medicationName)
         binding.editTextMedicationName.setSelection(binding.editTextMedicationName.text.length)
         binding.editTextMedicationStrength.setText(selected.strength)
@@ -234,6 +248,15 @@ class MedicationEditorFragment : Fragment() {
         binding.editTextMedicationUnit.setText(selected.packageUnit, false)
         binding.editTextMedicationSubstance.setText(selected.activeSubstance)
         updateUnitChoices(selected.packageUnit, selected.pharmaceuticalForm)
+        if (fillStockFromPackage) {
+            fillCurrentStockFromPackageSize(selected.packageSize)
+        }
+    }
+
+    private fun fillCurrentStockFromPackageSize(packageSize: String) {
+        if (binding.editTextMedicationCurrentStock.text.toString().isNotBlank()) return
+        val stockFromPackage = packageSize.trim().toIntOrNull()?.takeIf { it > 0 } ?: return
+        binding.editTextMedicationCurrentStock.setText(stockFromPackage.toString())
     }
 
     private fun updateUnitChoices(vararg choices: String) {
@@ -257,7 +280,7 @@ class MedicationEditorFragment : Fragment() {
                     Toast.LENGTH_LONG
                 ).show()
             } else {
-                fillFromCatalogSuggestion(suggestion)
+                fillFromCatalogSuggestion(suggestion, fillStockFromPackage = true)
             }
         }
     }

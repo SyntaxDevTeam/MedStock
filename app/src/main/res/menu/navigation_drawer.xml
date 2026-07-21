@@ -43,6 +43,11 @@
             android:title="@string/menu_settings" />
 
         <item
+            android:id="@+id/nav_info"
+            android:icon="@drawable/ic_info_outline_black_24dp"
+            android:title="@string/menu_info" />
+
+        <item
             android:id="@+id/nav_help"
             android:icon="@drawable/ic_help_outline_black_24dp"
             android:title="@string/menu_help" />

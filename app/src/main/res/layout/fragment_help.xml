@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -27,15 +26,18 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/help_privacy_policy_title"
+                    android:text="@string/help_center_title"
+                    android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
                     android:textColor="?attr/medColorTextPrimary"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/space_1"
-                    android:text="@string/settings_privacy_summary"
+                    android:layout_marginTop="@dimen/space_2"
+                    android:lineSpacingExtra="2dp"
+                    android:text="@string/help_center_intro"
+                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                     android:textColor="?attr/medColorTextSecondary" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -55,15 +57,16 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/help_data_safety_title"
+                    android:text="@string/help_guides_title"
+                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
                     android:textColor="?attr/medColorTextPrimary"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/space_3"
-                    android:text="@string/settings_privacy_local_data_title"
+                    android:layout_marginTop="@dimen/space_2"
+                    android:text="@string/help_guide_scan_title"
                     android:textColor="?attr/medColorTextPrimary"
                     android:textStyle="bold" />
 
@@ -71,14 +74,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/space_1"
-                    android:text="@string/settings_privacy_local_data_body"
+                    android:lineSpacingExtra="2dp"
+                    android:text="@string/help_guide_scan_flow"
                     android:textColor="?attr/medColorTextSecondary" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/space_3"
-                    android:text="@string/settings_privacy_cloud_backup_title"
+                    android:text="@string/help_guide_alert_title"
                     android:textColor="?attr/medColorTextPrimary"
                     android:textStyle="bold" />
 
@@ -86,7 +90,24 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/space_1"
-                    android:text="@string/settings_privacy_cloud_backup_body"
+                    android:lineSpacingExtra="2dp"
+                    android:text="@string/help_guide_alert_flow"
+                    android:textColor="?attr/medColorTextSecondary" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_3"
+                    android:text="@string/help_guide_reminder_title"
+                    android:textColor="?attr/medColorTextPrimary"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_1"
+                    android:lineSpacingExtra="2dp"
+                    android:text="@string/help_guide_reminder_flow"
                     android:textColor="?attr/medColorTextSecondary" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -106,7 +127,16 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/settings_privacy_medical_disclaimer_title"
+                    android:text="@string/help_faq_title"
+                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                    android:textColor="?attr/medColorTextPrimary"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_2"
+                    android:text="@string/help_faq_scan_question"
                     android:textColor="?attr/medColorTextPrimary"
                     android:textStyle="bold" />
 
@@ -114,14 +144,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/space_1"
-                    android:text="@string/settings_privacy_medical_disclaimer_body"
+                    android:lineSpacingExtra="2dp"
+                    android:text="@string/help_faq_scan_answer"
                     android:textColor="?attr/medColorTextSecondary" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/space_3"
-                    android:text="@string/settings_privacy_controls_title"
+                    android:text="@string/help_faq_stock_question"
                     android:textColor="?attr/medColorTextPrimary"
                     android:textStyle="bold" />
 
@@ -129,7 +160,40 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/space_1"
-                    android:text="@string/settings_privacy_controls_body"
+                    android:lineSpacingExtra="2dp"
+                    android:text="@string/help_faq_stock_answer"
+                    android:textColor="?attr/medColorTextSecondary" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_3"
+                    android:text="@string/help_faq_reminders_question"
+                    android:textColor="?attr/medColorTextPrimary"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_1"
+                    android:lineSpacingExtra="2dp"
+                    android:text="@string/help_faq_reminders_answer"
+                    android:textColor="?attr/medColorTextSecondary" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_3"
+                    android:text="@string/help_faq_data_question"
+                    android:textColor="?attr/medColorTextPrimary"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_1"
+                    android:lineSpacingExtra="2dp"
+                    android:text="@string/help_faq_data_answer"
                     android:textColor="?attr/medColorTextSecondary" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

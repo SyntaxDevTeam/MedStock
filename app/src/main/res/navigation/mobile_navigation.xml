@@ -68,6 +68,12 @@
         tools:layout="@layout/fragment_settings" />
 
     <fragment
+        android:id="@+id/nav_info"
+        android:name="pl.syntaxdevteam.medstock.ui.help.InfoFragment"
+        android:label="@string/menu_info"
+        tools:layout="@layout/fragment_info" />
+
+    <fragment
         android:id="@+id/nav_help"
         android:name="pl.syntaxdevteam.medstock.ui.help.HelpFragment"
         android:label="@string/menu_help"
