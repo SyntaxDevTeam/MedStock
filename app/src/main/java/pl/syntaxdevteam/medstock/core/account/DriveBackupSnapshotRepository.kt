@@ -28,6 +28,7 @@ class DriveBackupSnapshotRepository(context: Context) {
 
     fun createSnapshotFile(accountEmail: String): File {
         val medications = medicationRepository.getAll()
+        val archivedMedications = medicationRepository.getAllArchived()
         val reminders = reminderRepository.getAll()
         val payload = JSONObject().apply {
             put("format", SNAPSHOT_FORMAT)
@@ -51,6 +52,23 @@ class DriveBackupSnapshotRepository(context: Context) {
                         put("dosage", medication.dosage)
                         put("alertDays", medication.alertDays)
                         put("lastStockUpdateUtc", medication.lastStockUpdateUtc)
+                    })
+                }
+            })
+            put("archivedMedications", JSONArray().apply {
+                archivedMedications.forEach { medication ->
+                    put(JSONObject().apply {
+                        put("id", medication.id)
+                        put("originalMedicationId", medication.originalMedicationId)
+                        put("name", medication.name)
+                        put("strength", medication.strength)
+                        put("activeSubstance", medication.activeSubstance)
+                        put("packageSize", medication.packageSize)
+                        put("unit", medication.unit)
+                        put("currentStock", medication.currentStock)
+                        put("dosage", medication.dosage)
+                        put("alertDays", medication.alertDays)
+                        put("archivedAtUtc", medication.archivedAtUtc)
                     })
                 }
             })
@@ -116,6 +134,7 @@ class DriveBackupSnapshotRepository(context: Context) {
             db.delete("medication_reminder_medication", null, null)
             db.delete("medication_reminder", null, null)
             db.delete("user_medication", null, null)
+            db.delete("archived_user_medication", null, null)
 
             val medications = payload.optJSONArray("medications") ?: JSONArray()
             val fallbackLastStockUpdateUtc = backupCreatedAtAsDatabaseDateTime(payload)
@@ -138,6 +157,23 @@ class DriveBackupSnapshotRepository(context: Context) {
                     put("last_stock_update_utc", lastStockUpdateUtc)
                 })
                 snapshotId?.let { medicationIdMap[it] = restoredId }
+            }
+
+            val archivedMedications = payload.optJSONArray("archivedMedications") ?: JSONArray()
+            for (index in 0 until archivedMedications.length()) {
+                val medication = archivedMedications.optJSONObject(index) ?: continue
+                db.insertOrThrow("archived_user_medication", null, ContentValues().apply {
+                    put("original_medication_id", medication.optLong("originalMedicationId", 0L))
+                    put("name", medication.optString("name"))
+                    put("strength", medication.optString("strength"))
+                    put("active_substance", medication.optString("activeSubstance"))
+                    put("package_size", medication.optString("packageSize"))
+                    put("unit", medication.optString("unit"))
+                    put("current_stock", medication.optInt("currentStock", 0))
+                    put("dosage", medication.optString("dosage"))
+                    put("alert_days", medication.optInt("alertDays", 0))
+                    put("archived_at_utc", medication.optString("archivedAtUtc", fallbackLastStockUpdateUtc))
+                })
             }
 
             val reminders = payload.optJSONArray("reminders") ?: JSONArray()

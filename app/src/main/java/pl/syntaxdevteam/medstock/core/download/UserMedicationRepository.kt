@@ -5,6 +5,7 @@ import android.content.Context
 import kotlin.math.floor
 import pl.syntaxdevteam.medstock.core.stock.MedicationStockCalculator
 import pl.syntaxdevteam.medstock.ui.medicationlist.UserMedication
+import pl.syntaxdevteam.medstock.ui.medicationarchive.ArchivedMedication
 
 class UserMedicationRepository(context: Context) {
 
@@ -114,7 +115,55 @@ class UserMedicationRepository(context: Context) {
     }
 
     fun delete(id: Long): Int {
-        return dbHelper.writableDatabase.delete("user_medication", "id = ?", arrayOf(id.toString()))
+        val db = dbHelper.writableDatabase
+        db.beginTransaction()
+        return try {
+            val archivedRows = db.compileStatement(
+                """
+                INSERT INTO archived_user_medication(
+                    original_medication_id, name, strength, active_substance, package_size, unit,
+                    current_stock, dosage, alert_days, last_stock_update_utc, archived_at_utc
+                )
+                SELECT id, name, strength, active_substance, package_size, unit,
+                       current_stock, dosage, alert_days, last_stock_update_utc, datetime('now')
+                FROM user_medication WHERE id = ?
+                """.trimIndent()
+            ).use { statement ->
+                statement.bindLong(1, id)
+                statement.executeInsert()
+            }
+            val deletedRows = if (archivedRows != -1L) {
+                db.delete("user_medication", "id = ?", arrayOf(id.toString()))
+            } else {
+                0
+            }
+            db.setTransactionSuccessful()
+            deletedRows
+        } finally {
+            db.endTransaction()
+        }
+    }
+
+    fun getAllArchived(): List<ArchivedMedication> {
+        val query = """
+            SELECT id, original_medication_id, name, strength, active_substance, package_size, unit,
+                   current_stock, dosage, alert_days, archived_at_utc
+            FROM archived_user_medication
+            ORDER BY archived_at_utc DESC, id DESC
+        """.trimIndent()
+        return dbHelper.readableDatabase.rawQuery(query, null).use { cursor ->
+            buildList {
+                while (cursor.moveToNext()) {
+                    add(ArchivedMedication(
+                        id = cursor.getLong(0), originalMedicationId = cursor.getLong(1), name = cursor.getString(2),
+                        strength = cursor.getString(3).orEmpty(), activeSubstance = cursor.getString(4).orEmpty(),
+                        packageSize = cursor.getString(5).orEmpty(), unit = cursor.getString(6).orEmpty(),
+                        currentStock = cursor.getInt(7), dosage = cursor.getString(8).orEmpty(),
+                        alertDays = cursor.getInt(9), archivedAtUtc = cursor.getString(10).orEmpty()
+                    ))
+                }
+            }
+        }
     }
 
     fun reconcileStockDepletion(): Int {

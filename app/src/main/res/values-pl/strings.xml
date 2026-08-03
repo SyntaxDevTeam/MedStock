@@ -17,6 +17,7 @@
     <string name="menu_alerty">Alerty</string>
     <string name="menu_account">Konto</string>
     <string name="menu_settings">Ustawienia</string>
+    <string name="menu_medication_archive">Archiwum leków</string>
     <string name="menu_alarm">Alarmy</string>
     <string name="menu_info">Informacje</string>
     <string name="menu_help">Pomoc</string>
@@ -111,6 +112,11 @@
 
     <string name="medication_list_summary">Liczba leków: %1$d</string>
     <string name="medication_list_subtitle">Twoja lista leków</string>
+    <string name="medication_archive_subtitle">Wcześniej usunięte leki</string>
+    <string name="medication_archive_summary">Zarchiwizowane leki: %1$d</string>
+    <string name="medication_archive_empty">Nie zarchiwizowano jeszcze żadnych leków.</string>
+    <string name="medication_archive_item_details">Zarchiwizowano: %1$s\nStan przy usunięciu: %2$d %3$s\nDawkowanie: %4$s</string>
+    <string name="medication_archive_no_dosage">nie podano</string>
     <string name="fab_add_medication_content_description">Dodaj lek do listy</string>
     <string name="medication_editor_title">Formularz leku</string>
     <string name="medication_strength_hint">Moc, np. 200 mg</string>

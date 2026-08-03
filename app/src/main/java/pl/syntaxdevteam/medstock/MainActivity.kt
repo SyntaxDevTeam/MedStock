@@ -43,6 +43,7 @@ import pl.syntaxdevteam.medstock.ui.baza.pharmacy.PharmacyCatalogFragment
 import pl.syntaxdevteam.medstock.core.theme.ThemeManager
 import pl.syntaxdevteam.medstock.ui.medicationlist.MedicationEditorFragment
 import pl.syntaxdevteam.medstock.ui.medicationlist.MedicationListFragment
+import pl.syntaxdevteam.medstock.ui.medicationarchive.MedicationArchiveFragment
 import androidx.core.view.size
 import androidx.core.view.get
 
@@ -83,6 +84,8 @@ class MainActivity : AppCompatActivity() {
                 is MedicationListFragment -> {
                     showMedicationAddSubMenu(it, navController)
                 }
+
+                is MedicationArchiveFragment -> binding.appBarMain.fab?.hide()
 
                 is RemindersListFragment -> {
                     navController.navigate(R.id.nav_reminder_editor)
@@ -158,6 +161,12 @@ class MainActivity : AppCompatActivity() {
                     binding.appBarMain.fab?.hide()
                 }
 
+                R.id.nav_medication_archive -> {
+                    titleToolbar.title = getString(R.string.menu_medication_archive)
+                    titleToolbar.subtitle = getString(R.string.medication_archive_subtitle)
+                    binding.appBarMain.fab?.hide()
+                }
+
                 R.id.nav_reminder_editor -> {
                     titleToolbar.title = getString(R.string.reminder_editor_title)
                     titleToolbar.subtitle = getString(R.string.menu_alarm)
@@ -190,6 +199,7 @@ class MainActivity : AppCompatActivity() {
                 destination.id != R.id.nav_reminder_editor &&
                 destination.id != R.id.nav_baza_leki_detail_screen &&
                 destination.id != R.id.nav_account &&
+                destination.id != R.id.nav_medication_archive &&
                 destination.id != R.id.nav_info &&
                 destination.id != R.id.nav_help
             ) {
@@ -249,6 +259,7 @@ class MainActivity : AppCompatActivity() {
         R.id.nav_alerty_przypomnienia_screen,
         R.id.nav_account,
         R.id.nav_settings,
+        R.id.nav_medication_archive,
         R.id.nav_info,
         R.id.nav_help,
     )
@@ -359,6 +370,7 @@ class MainActivity : AppCompatActivity() {
             R.id.nav_medication_list -> R.id.nav_medication_list
             R.id.nav_account -> R.id.nav_account
             R.id.nav_settings -> R.id.nav_settings
+            R.id.nav_medication_archive -> R.id.nav_medication_archive
             R.id.nav_info -> R.id.nav_info
             R.id.nav_help -> R.id.nav_help
             else -> null
@@ -485,6 +497,11 @@ class MainActivity : AppCompatActivity() {
             R.id.nav_settings -> {
                 val navController = findNavController(R.id.nav_host_fragment_content_main)
                 navController.navigate(R.id.nav_settings)
+                return true
+            }
+            R.id.nav_medication_archive -> {
+                val navController = findNavController(R.id.nav_host_fragment_content_main)
+                navController.navigate(R.id.nav_medication_archive)
                 return true
             }
             R.id.nav_info -> {

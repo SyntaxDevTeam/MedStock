@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import pl.syntaxdevteam.medstock.core.download.UserMedicationRepository
+import pl.syntaxdevteam.medstock.core.account.DriveBackupScheduler
 import pl.syntaxdevteam.medstock.core.stock.StockAlertDismissalStore
 import pl.syntaxdevteam.medstock.core.stock.StockAlertNotifier
 
@@ -131,7 +132,9 @@ class MedicationListViewModel(application: Application) : AndroidViewModel(appli
 
     fun deleteMedication(id: Long) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.delete(id)
+            if (repository.delete(id) > 0) {
+                DriveBackupScheduler.enqueueAfterDataChange(getApplication())
+            }
             refreshMedications()
         }
     }

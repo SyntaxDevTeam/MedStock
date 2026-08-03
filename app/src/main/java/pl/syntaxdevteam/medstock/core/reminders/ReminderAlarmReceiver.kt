@@ -90,8 +90,8 @@ class ReminderAlarmReceiver : BroadcastReceiver() {
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setOngoing(true)
             .setAutoCancel(false)
-            .setSound(customSoundUri(context, reminder.soundName))
-            .setVibrate(VIBRATION_PATTERN)
+            .setSilent(true)
+            .setOnlyAlertOnce(true)
             .setContentIntent(fullScreenIntent)
             .setFullScreenIntent(fullScreenIntent, true)
             .addAction(
@@ -148,15 +148,8 @@ class ReminderAlarmReceiver : BroadcastReceiver() {
             NotificationManager.IMPORTANCE_HIGH
         ).apply {
             description = context.getString(R.string.reminder_notification_channel_description)
-            setSound(
-                customSoundUri(context, soundName),
-                AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_ALARM)
-                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                    .build()
-            )
-            enableVibration(true)
-            vibrationPattern = VIBRATION_PATTERN
+            setSound(null, null)
+            enableVibration(false)
             lockscreenVisibility = NotificationCompat.VISIBILITY_PUBLIC
         }
         manager.createNotificationChannel(channel)
@@ -176,7 +169,8 @@ class ReminderAlarmReceiver : BroadcastReceiver() {
     companion object {
         const val ACTION_RINGING_RESOLVED = "pl.syntaxdevteam.medstock.action.RINGING_RESOLVED"
         private const val TAG = "ReminderAlarmReceiver"
-        private const val CHANNEL_ID_PREFIX = "medication_reminders_alarm"
+        // A new channel id ensures prior, user-configured noisy channels cannot affect alarm notifications.
+        private const val CHANNEL_ID_PREFIX = "medication_reminders_alarm_silent_v2"
         private val VIBRATION_PATTERN = longArrayOf(0L, 500L, 300L, 500L, 1_000L)
 
         fun customSoundUri(context: Context, soundName: String? = ReminderSoundCatalog.DEFAULT_SOUND_NAME): Uri = ReminderSoundCatalog.soundUri(context, soundName)

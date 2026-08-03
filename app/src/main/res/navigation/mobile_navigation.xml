@@ -68,6 +68,12 @@
         tools:layout="@layout/fragment_settings" />
 
     <fragment
+        android:id="@+id/nav_medication_archive"
+        android:name="pl.syntaxdevteam.medstock.ui.medicationarchive.MedicationArchiveFragment"
+        android:label="@string/menu_medication_archive"
+        tools:layout="@layout/fragment_medication_archive" />
+
+    <fragment
         android:id="@+id/nav_info"
         android:name="pl.syntaxdevteam.medstock.ui.help.InfoFragment"
         android:label="@string/menu_info"

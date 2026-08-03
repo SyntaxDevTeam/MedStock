@@ -72,6 +72,21 @@ object DriveBackupScheduler {
         WorkManager.getInstance(context).cancelUniqueWork(OVERDUE_WORK_NAME)
     }
 
+    /** Queues a prompt snapshot after user data changes, when Drive backup is enabled. */
+    fun enqueueAfterDataChange(context: Context) {
+        val state = AccountStateStore(context).getState()
+        if (!state.isConnected || !state.driveBackupEnabled) return
+        val request = OneTimeWorkRequestBuilder<DriveBackupWorker>()
+            .setConstraints(networkConstraints())
+            .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, MIN_BACKOFF_MINUTES, TimeUnit.MINUTES)
+            .build()
+        WorkManager.getInstance(context).enqueueUniqueWork(
+            DATA_CHANGE_WORK_NAME,
+            ExistingWorkPolicy.REPLACE,
+            request,
+        )
+    }
+
     private fun enqueueOverdueBackup(context: Context) {
         val request = OneTimeWorkRequestBuilder<DriveBackupWorker>()
             .setConstraints(networkConstraints())
@@ -94,6 +109,7 @@ object DriveBackupScheduler {
 
     private const val PERIODIC_WORK_NAME = "drive-backup-periodic"
     private const val OVERDUE_WORK_NAME = "drive-backup-overdue"
+    private const val DATA_CHANGE_WORK_NAME = "drive-backup-after-data-change"
     private const val BACKUP_INTERVAL_HOURS = 24L
     private const val BACKUP_INTERVAL_MILLIS = BACKUP_INTERVAL_HOURS * 60L * 60L * 1000L
     private const val MIN_BACKOFF_MINUTES = 15L

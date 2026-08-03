@@ -36,7 +36,7 @@ fun validateReleaseSigningConfig() {
 android {
     namespace = "pl.syntaxdevteam.medstock"
     compileSdk {
-        version = release(36) {
+        version = release(37) {
             minorApiLevel = 1
         }
     }
@@ -55,9 +55,9 @@ android {
     defaultConfig {
         applicationId = "pl.syntaxdevteam.medstock"
         minSdk = 31
-        targetSdk = 36
-        versionCode = 6
-        versionName = "1.0.0-Build-17be8b"
+        targetSdk = 37
+        versionCode = 7
+        versionName = "1.0.0-Build-ac114a"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

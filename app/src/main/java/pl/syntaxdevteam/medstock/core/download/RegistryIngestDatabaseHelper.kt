@@ -60,6 +60,9 @@ class RegistryIngestDatabaseHelper(context: Context) :
                 definition = "TEXT NOT NULL DEFAULT 'dzwonki'"
             )
         }
+        if (oldVersion < 11) {
+            RegistryIngestSchema.statements.forEach(db::execSQL)
+        }
     }
 
     override fun onDowngrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {

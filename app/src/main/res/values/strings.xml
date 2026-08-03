@@ -17,6 +17,7 @@
     <string name="menu_alerty">Alerts</string>
     <string name="menu_account">Account</string>
     <string name="menu_settings">Settings</string>
+    <string name="menu_medication_archive">Medication archive</string>
     <string name="menu_alarm">Alarms</string>
     <string name="menu_info">Information</string>
     <string name="menu_help">Help</string>
@@ -111,6 +112,11 @@
 
     <string name="medication_list_summary">Medication count: %1$d</string>
     <string name="medication_list_subtitle">Your medication list</string>
+    <string name="medication_archive_subtitle">Previously removed medications</string>
+    <string name="medication_archive_summary">Archived medications: %1$d</string>
+    <string name="medication_archive_empty">No medications have been archived yet.</string>
+    <string name="medication_archive_item_details">Archived: %1$s\nStock when removed: %2$d %3$s\nDosage: %4$s</string>
+    <string name="medication_archive_no_dosage">not specified</string>
     <string name="fab_add_medication_content_description">Add medication to your list</string>
     <string name="medication_editor_title">Medication form</string>
     <string name="medication_strength_hint">Strength, e.g. 200 mg</string>
