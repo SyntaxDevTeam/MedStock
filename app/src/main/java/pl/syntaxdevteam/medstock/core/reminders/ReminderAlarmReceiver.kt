@@ -8,8 +8,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.media.AudioAttributes
-import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -90,7 +88,6 @@ class ReminderAlarmReceiver : BroadcastReceiver() {
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setOngoing(true)
             .setAutoCancel(false)
-            .setSilent(true)
             .setOnlyAlertOnce(true)
             .setContentIntent(fullScreenIntent)
             .setFullScreenIntent(fullScreenIntent, true)
@@ -169,11 +166,8 @@ class ReminderAlarmReceiver : BroadcastReceiver() {
     companion object {
         const val ACTION_RINGING_RESOLVED = "pl.syntaxdevteam.medstock.action.RINGING_RESOLVED"
         private const val TAG = "ReminderAlarmReceiver"
-        // A new channel id ensures prior, user-configured noisy channels cannot affect alarm notifications.
-        private const val CHANNEL_ID_PREFIX = "medication_reminders_alarm_silent_v2"
-        private val VIBRATION_PATTERN = longArrayOf(0L, 500L, 300L, 500L, 1_000L)
-
-        fun customSoundUri(context: Context, soundName: String? = ReminderSoundCatalog.DEFAULT_SOUND_NAME): Uri = ReminderSoundCatalog.soundUri(context, soundName)
+        // Keep the channel silent, but visually interruptive so Android may launch the full-screen intent.
+        private const val CHANNEL_ID_PREFIX = "medication_reminders_alarm_visual_silent_v3"
 
         fun channelId(soundName: String?): String = "$CHANNEL_ID_PREFIX.${soundName ?: ReminderSoundCatalog.DEFAULT_SOUND_NAME}"
     }
