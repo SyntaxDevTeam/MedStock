@@ -31,6 +31,8 @@ class MedicationListFragment : Fragment() {
     ): View {
         _binding = FragmentMedicationListBinding.inflate(inflater, container, false)
 
+        binding.buttonFamily.setOnClickListener { findNavController().navigate(R.id.nav_family) }
+
         val adapter = MedicationListAdapter { medicationId ->
             findNavController().navigate(
                 R.id.nav_medication_editor,

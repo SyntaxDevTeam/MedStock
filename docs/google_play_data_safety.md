@@ -47,3 +47,8 @@ MedStock is a home inventory manager for medicinal products. It records user-ent
 3. Re-check dependencies and SDK disclosures before every release.
 4. Keep Settings and Account disclosures aligned with the privacy policy.
 5. If new analytics, ads, crash reporting, payments, location, sensors, or medical decision features are added, update this declaration before release.
+
+
+## Dodatek: opcjonalne listy rodzinne
+
+Wersja zawierająca manager rodzinny przesyła do wskazanego przez użytkownika serwera login, hasło przy uwierzytelnieniu, nazwę, członkostwo i jawnie udostępnione listy leków (dane mogące ujawniać stan zdrowia). Są one dostępne do edycji członkom rodziny. Nie można już opisywać całej aplikacji jako przechowującej dane wyłącznie lokalnie lub na prywatnym Drive. Przed publikacją należy zaktualizować deklarację według faktycznego hostingu, operatora, celu i zasad udostępniania. Funkcja nie korzysta z analityki ani reklam. Usunięcie konta rodzinnego jest dostępne w ekranie Rodzina; nie usuwa ono lokalnych leków ani kopii Drive. Szczegóły działania: `server/README.md` i dodatek w polityce prywatności.

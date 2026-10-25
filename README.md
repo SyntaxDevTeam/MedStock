@@ -104,3 +104,12 @@ Wszystkie dane są autentycznymi, dostępnymi publicznie danymi z polskiego reje
 * Rejestr Aptek:
     - https://rejestry.ezdrowie.gov.pl/api/ra/filegenerator/getxls
     - https://rejestry.ezdrowie.gov.pl/api/ra/filegenerator/getcsv
+
+
+## Manager rodzinny
+
+W menu oraz nad lokalną listą leków dostępna jest **Rodzina**: wspólne listy wybierane według osoby, osobne konta na telefonach, profile osób bez telefonu, jednorazowe zaproszenia i wspólna edycja. Funkcja wymaga uruchomienia serwera HTTPS z katalogu `server/`. Kod serwera i konfiguracja wdrożenia są dołączone do projektu; nie jest to automatycznie uruchomiona usługa.
+
+Listy rodzinne są odrębne od dotychczasowych leków lokalnych i alarmów. Własne lokalne leki można jawnie skopiować do rodziny; późniejsze zmiany i przypomnienia nie synchronizują się między tymi dwiema listami. Wspólne listy wymagają sieci i odświeżają się podczas wyświetlania ekranu. Równoczesne zmiany są chronione wersją listy.
+
+Instrukcja uruchomienia, opis dostępu i ograniczeń: [server/README.md](server/README.md).

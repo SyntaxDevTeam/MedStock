@@ -17,3 +17,9 @@ keystore.properties
 keystore/
 *.jks
 *.keystore
+
+# Family server runtime data and private deployment configuration
+server/.env
+server/*.sqlite3*
+server/__pycache__/
+server/tests/__pycache__/

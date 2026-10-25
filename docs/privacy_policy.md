@@ -371,3 +371,18 @@ Repozytoryjny plik Markdown może być źródłem dokumentu, ale przed publikacj
 
 **Kontakt:** WieszczY (SyntaxDevTeam), <https://github.com/SyntaxDevTeam/MedStock_One/issues>
 **Prośba o bezpieczeństwo:** nie publikuj w zgłoszeniu danych o zdrowiu, adresu e-mail, dokładnej lokalizacji ani pliku wyeksportowanej bazy MedStock.
+
+
+## 21. Opcjonalny manager rodzinny
+
+Po wdrożeniu serwera rodzinnego użytkownik może włączyć współdzielenie przez utworzenie osobnego konta na wskazanym serwerze HTTPS. Nie jest ono połączone z kontem Google ani kopią Drive. Do serwera przesyłane są login, hasło przy rejestracji/logowaniu, nazwa profilu, członkostwo i jawnie wprowadzone lub skopiowane rodzinne listy leków: nazwy, substancje czynne, moc, opakowania, zapas, jednostki, dawkowanie i progi alertów. Lokalne przypomnienia i historia dawek nie są przesyłane przez tę funkcję.
+
+Dane są dostępne wszystkim członkom tej samej rodziny do odczytu i edycji. Założyciel zaprasza kodem ważnym 24 godziny dla jednej osoby i może odebrać dostęp. Udostępnianie danych bliskich osób wymaga ich wiedzy i odpowiedniej podstawy. Samo utworzenie konta nie udostępnia lokalnych leków; kopiowanie lokalnej listy wymaga osobnego potwierdzenia.
+
+Odbiorcą danych jest operator serwera pod adresem wybranym przez użytkownika oraz osoby zaproszone do rodziny. Serwer nie ma dodatkowego szyfrowania end-to-end; jego administrator może technicznie odczytać listy. Miejsce przechowywania, dostawca hostingu, zasady kopii zapasowych i ewentualne transfery poza EOG zależą od faktycznego wdrożenia. Operator musi wskazać własne dane kontaktowe i obowiązujące zasady przed udostępnieniem usługi. Dołączony kod i przykładowa konfiguracja nie określają automatycznie publicznego operatora.
+
+Hasła są przechowywane na serwerze jako scrypt z solą; sesje jako skróty losowych tokenów wygasających po 30 dniach. Telefon przechowuje token w prywatnych preferencjach, poza regułami backupu Android, i ostatnią pobraną listę w pamięci otwartego ekranu. Nie zapisuje hasła ani trwałej kopii rodzinnej bazy.
+
+Wylogowanie usuwa sesję z telefonu i próbuje unieważnić ją na serwerze. Opuszczenie rodziny lub usunięcie członka usuwa jego wspólny profil i odbiera dostęp. Usunięcie rodziny usuwa wszystkie jej współdzielone listy. Usunięcie konta rodzinnego w aplikacji usuwa konto i jego wspólny profil; dla założyciela usuwa również całą rodzinę. Operacje usuwania wymagają połączenia i potwierdzenia. Lokalne leki pozostają na telefonie. Kopie administracyjne i dane już skopiowane przez uprawnionych członków podlegają retencji operatora i nie są automatycznie odwoływane.
+
+Przed publikacją wersji z tą funkcją operator powinien uwzględnić faktyczne wdrożenie w opublikowanej polityce prywatności i deklaracji danych Google Play.

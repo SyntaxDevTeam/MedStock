@@ -155,6 +155,12 @@ class MainActivity : AppCompatActivity() {
                     binding.appBarMain.fab?.hide()
                 }
 
+                R.id.nav_family -> {
+                    titleToolbar.title = getString(R.string.menu_family)
+                    titleToolbar.subtitle = null
+                    binding.appBarMain.fab?.hide()
+                }
+
                 R.id.nav_account -> {
                     titleToolbar.title = getString(R.string.menu_account)
                     titleToolbar.subtitle = getString(R.string.account_toolbar_subtitle)
@@ -198,6 +204,7 @@ class MainActivity : AppCompatActivity() {
                 if (destination.id != R.id.nav_medication_editor &&
                 destination.id != R.id.nav_reminder_editor &&
                 destination.id != R.id.nav_baza_leki_detail_screen &&
+                destination.id != R.id.nav_family &&
                 destination.id != R.id.nav_account &&
                 destination.id != R.id.nav_medication_archive &&
                 destination.id != R.id.nav_info &&
@@ -257,6 +264,7 @@ class MainActivity : AppCompatActivity() {
         R.id.nav_baza_apteki_screen,
         R.id.nav_alerty_lista_screen,
         R.id.nav_alerty_przypomnienia_screen,
+        R.id.nav_family,
         R.id.nav_account,
         R.id.nav_settings,
         R.id.nav_medication_archive,

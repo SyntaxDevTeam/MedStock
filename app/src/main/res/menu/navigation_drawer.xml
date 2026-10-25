@@ -9,6 +9,8 @@
             android:icon="@drawable/ic_list_black_24dp"
             android:title="@string/menu_medication_list" />
 
+        <item android:id="@+id/nav_family" android:icon="@drawable/ic_list_black_24dp" android:title="@string/menu_family" />
+
         <item
             android:id="@+id/nav_baza_group"
             android:icon="@drawable/ic_database_black_24dp"

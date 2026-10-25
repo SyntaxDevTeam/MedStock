@@ -55,6 +55,10 @@
         android:label="@string/medication_editor_title"
         tools:layout="@layout/fragment_medication_editor" />
 
+    <fragment android:id="@+id/nav_family"
+        android:name="pl.syntaxdevteam.medstock.ui.family.FamilyFragment"
+        android:label="@string/menu_family" tools:layout="@layout/fragment_family" />
+
     <fragment
         android:id="@+id/nav_account"
         android:name="pl.syntaxdevteam.medstock.ui.account.AccountFragment"
