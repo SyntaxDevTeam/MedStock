@@ -138,7 +138,7 @@
     <string name="medication_delete_confirmation_unknown">ten lek</string>
     <string name="medication_editor_required">Nazwa leku jest wymagana.</string>
     <string name="medication_editor_invalid_numbers">Aktualny stan i alert dni muszą być poprawnymi liczbami.</string>
-    <string name="medication_duplicate_title">Wykryto tę samą substancję czynną</string>
+    <string name="medication_duplicate_title">Wykryto ten sam lek o tej samej mocy</string>
     <string name="medication_duplicate_message">Substancja czynna: %1$s
 Dodawany lek: %2$s
 Stan do dopisania: %3$s
@@ -416,7 +416,7 @@ Wybierz istniejący lek do aktualizacji albo dodaj ten wpis jako osobny lek.</st
     <string name="family_updated">Lista zmieniona: %1$s</string>
     <string name="family_add_medication">Dodaj lek</string>
     <string name="family_import">Skopiuj moje lokalne leki do rodziny</string>
-    <string name="family_import_confirm">Skopiować leki z tego telefonu do Twojej listy rodzinnej? To osobne kopie: późniejsze zmiany lokalne i alarmy nie są synchronizowane. Ponowne wykonanie doda duplikaty.</string>
+    <string name="family_import_confirm">Skopiować aktualne leki z tego telefonu do Twojego profilu rodzinnego? Wszyscy w rodzinie mogą je przeglądać i edytować. Wcześniej skopiowane z tego telefonu wpisy zostaną zaktualizowane, wraz z zapasem, bez sumowania. Osobne wpisy rodzinne pozostaną. Kopie utworzone starszą wersją aplikacji pozostaną osobnymi wpisami. Późniejsze zmiany lokalne i alarmy nie synchronizują się automatycznie.</string>
     <string name="family_delete_person">Usuń ten profil</string>
     <string name="family_delete_person_confirm">Usunąć ten profil i wszystkie jego wspólne leki u wszystkich członków rodziny?</string>
     <string name="family_empty">Ta lista rodzinna nie zawiera jeszcze leków.</string>
@@ -457,4 +457,10 @@ Wybierz istniejący lek do aktualizacji albo dodaj ten wpis jako osobny lek.</st
     <string name="family_error_limit">Osiągnięto limit rodziny lub listy. Usuń niepotrzebne wpisy.</string>
     <string name="family_error_network">Nie udało się potwierdzić operacji na serwerze. Sprawdź połączenie i odśwież przed ponowieniem. Wspólna lista wymaga połączenia; zmiany offline nie są kolejkowane.</string>
     <string name="family_offline">Brak aktualnego połączenia. Wyświetlana lista może być nieaktualna. Odśwież przed edycją.</string>
+    <string name="family_manage">Ustawienia rodziny i konta</string>
+    <string name="family_manage_hide">Ukryj ustawienia</string>
+    <string name="family_profile_title">Leki: %1$s</string>
+    <string name="family_empty_own">Nie udostępniono jeszcze leków z tego telefonu. Użyj przycisku „Skopiuj moje lokalne leki do rodziny”. Późniejsze zmiany wymagają ponownego skopiowania.</string>
+    <string name="family_empty_member">Ta osoba nie udostępniła jeszcze leków. Na jej telefonie otwórz Rodzinę, wybierz jej własny profil i skopiuj lokalne leki do rodziny. Samo dołączenie nie udostępnia listy z telefonu.</string>
+    <string name="family_logout_confirm">Wylogować konto rodzinne na tym telefonie?</string>
 </resources>

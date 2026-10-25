@@ -138,7 +138,7 @@
     <string name="medication_delete_confirmation_unknown">this medication</string>
     <string name="medication_editor_required">Medication name is required.</string>
     <string name="medication_editor_invalid_numbers">Current stock and alert days must be valid numbers.</string>
-    <string name="medication_duplicate_title">Same active substance detected</string>
+    <string name="medication_duplicate_title">Same medication and strength detected</string>
     <string name="medication_duplicate_message">Active substance: %1$s
 New medication: %2$s
 Stock to add: %3$s
@@ -414,7 +414,7 @@ Select an existing medication to update, or add this as a separate list entry.</
     <string name="family_updated">List changed: %1$s</string>
     <string name="family_add_medication">Add medication</string>
     <string name="family_import">Copy my local medications to family</string>
-    <string name="family_import_confirm">Copy medications from this phone to your family list? These are separate copies: later local changes and alarms are not synchronized. Repeating this action adds duplicates.</string>
+    <string name="family_import_confirm">Copy current medications from this phone to your family profile? Everyone in the family can view and edit them. Previously imported entries from this phone will be updated, including their stock, without adding it up. Separate family entries remain. Earlier copies made by older app versions remain separate. Later local changes and alarms are not synchronized automatically.</string>
     <string name="family_delete_person">Delete this profile</string>
     <string name="family_delete_person_confirm">Delete this profile and all its shared medications for everyone?</string>
     <string name="family_empty">No medications in this family list yet.</string>
@@ -455,4 +455,10 @@ Select an existing medication to update, or add this as a separate list entry.</
     <string name="family_error_limit">Family or list limit reached. Remove unused entries.</string>
     <string name="family_error_network">Could not confirm the operation with the server. Check your connection and refresh before retrying. A shared list requires a connection; no offline edits are queued.</string>
     <string name="family_offline">No current connection. The displayed list may be outdated. Refresh before editing.</string>
+    <string name="family_manage">Family and account settings</string>
+    <string name="family_manage_hide">Hide settings</string>
+    <string name="family_profile_title">Medications: %1$s</string>
+    <string name="family_empty_own">You have not shared medications from this phone yet. Use “Copy my local medications to family”. Later changes require copying again.</string>
+    <string name="family_empty_member">This person has not shared any medications yet. On their phone, open Family, select their own profile and copy their local medications to family. Joining alone does not share the local list.</string>
+    <string name="family_logout_confirm">Sign out of the family account on this phone?</string>
 </resources>

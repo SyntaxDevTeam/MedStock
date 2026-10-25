@@ -138,7 +138,7 @@
     <string name="medication_delete_confirmation_unknown">dieses Arzneimittel</string>
     <string name="medication_editor_required">Der Name des Arzneimittels ist erforderlich.</string>
     <string name="medication_editor_invalid_numbers">Aktueller Bestand und Warnungstage müssen gültige Zahlen sein.</string>
-    <string name="medication_duplicate_title">Derselbe Wirkstoff wurde erkannt</string>
+    <string name="medication_duplicate_title">Gleiches Medikament mit gleicher Stärke erkannt</string>
     <string name="medication_duplicate_message">Wirkstoff: %1$s
 Hinzugefügtes Arzneimittel: %2$s
 Hinzuzufügender Bestand: %3$s
@@ -412,7 +412,7 @@ Wähle ein vorhandenes Arzneimittel zur Aktualisierung oder füge diesen Eintrag
     <string name="family_updated">Liste geändert: %1$s</string>
     <string name="family_add_medication">Medikament hinzufügen</string>
     <string name="family_import">Meine lokalen Medikamente in die Familie kopieren</string>
-    <string name="family_import_confirm">Medikamente dieses Telefons in deine Familienliste kopieren? Es sind getrennte Kopien: Spätere lokale Änderungen und Alarme werden nicht synchronisiert. Wiederholung erzeugt Duplikate.</string>
+    <string name="family_import_confirm">Aktuelle Medikamente dieses Telefons in dein Familienprofil kopieren? Alle Familienmitglieder können sie ansehen und bearbeiten. Bereits von diesem Telefon kopierte Einträge werden samt Bestand aktualisiert, ohne die Mengen zu addieren. Andere Einträge bleiben erhalten. Mit älteren App-Versionen erstellte Kopien bleiben getrennt. Spätere lokale Änderungen und Alarme werden nicht automatisch synchronisiert.</string>
     <string name="family_delete_person">Dieses Profil löschen</string>
     <string name="family_delete_person_confirm">Dieses Profil und alle zugehörigen gemeinsamen Medikamente für alle löschen?</string>
     <string name="family_empty">Diese Familienliste enthält noch keine Medikamente.</string>
@@ -453,4 +453,10 @@ Wähle ein vorhandenes Arzneimittel zur Aktualisierung oder füge diesen Eintrag
     <string name="family_error_limit">Familien- oder Listenlimit erreicht. Nicht benötigte Einträge entfernen.</string>
     <string name="family_error_network">Der Vorgang konnte auf dem Server nicht bestätigt werden. Verbindung prüfen und vor einem neuen Versuch aktualisieren. Gemeinsame Listen benötigen eine Verbindung; Offline-Änderungen werden nicht vorgemerkt.</string>
     <string name="family_offline">Keine aktuelle Verbindung. Die angezeigte Liste ist möglicherweise veraltet. Vor dem Bearbeiten aktualisieren.</string>
+    <string name="family_manage">Familien- und Kontoeinstellungen</string>
+    <string name="family_manage_hide">Einstellungen ausblenden</string>
+    <string name="family_profile_title">Medikamente: %1$s</string>
+    <string name="family_empty_own">Du hast noch keine Medikamente von diesem Telefon geteilt. Verwende „Meine lokalen Medikamente in die Familie kopieren“. Spätere Änderungen müssen erneut kopiert werden.</string>
+    <string name="family_empty_member">Diese Person hat noch keine Medikamente geteilt. Öffne auf ihrem Telefon Familie, wähle ihr eigenes Profil und kopiere ihre lokalen Medikamente in die Familie. Der Beitritt allein teilt die lokale Liste nicht.</string>
+    <string name="family_logout_confirm">Auf diesem Telefon vom Familienkonto abmelden?</string>
 </resources>

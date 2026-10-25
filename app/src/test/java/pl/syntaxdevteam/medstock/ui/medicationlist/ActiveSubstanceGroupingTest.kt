@@ -22,16 +22,27 @@ class ActiveSubstanceGroupingTest {
             medication(id = 3, name = "Bibloc", activeSubstance = "  bisoprolol   fumarate  "),
         )
 
-        val matches = ActiveSubstanceGrouping.findMatches("BISOPROLOL FUMARATE", medications)
+        val matches = ActiveSubstanceGrouping.findMatches("BISOPROLOL FUMARATE", "Bibloc", "5 mg", "tabs.", medications)
 
-        assertEquals(listOf(1L, 3L), matches.map { it.id })
+        assertEquals(listOf(3L), matches.map { it.id })
     }
 
     @Test
     fun findMatchesIgnoresBlankSubstances() {
         val medications = listOf(medication(id = 1, name = "Blank", activeSubstance = ""))
 
-        assertTrue(ActiveSubstanceGrouping.findMatches("   ", medications).isEmpty())
+        assertTrue(ActiveSubstanceGrouping.findMatches("   ", "Blank", "5 mg", "tabs.", medications).isEmpty())
+    }
+
+    @Test fun differentStrengthsAndUnitsNeverShareStock() {
+        val bibloc = medication(1, "Bibloc", "Bisoprolol fumarate").copy(strength = "10 mg", currentStock = 5)
+        val medications = listOf(bibloc)
+        assertTrue(ActiveSubstanceGrouping.findMatches("Bisoprolol fumarate", "Bibloc", "2,5 mg", "tabs.", medications).isEmpty())
+        assertTrue(ActiveSubstanceGrouping.findMatches("Bisoprolol fumarate", "Bibloc", "10 mg", "ml", medications).isEmpty())
+        assertTrue(ActiveSubstanceGrouping.findMatches("Bisoprolol fumarate", "Bibloc", "", "tabs.", medications).isEmpty())
+        assertTrue(ActiveSubstanceGrouping.findMatches("Bisoprolol fumarate", "Bibloc", "10 mg", "", medications).isEmpty())
+        val decimal = bibloc.copy(strength = "2.5 mg")
+        assertEquals(listOf(decimal), ActiveSubstanceGrouping.findMatches("Bisoprolol fumarate", "Bibloc", "2,5mg", "tabs.", listOf(decimal)))
     }
 
     private fun medication(
