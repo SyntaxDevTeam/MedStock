@@ -414,7 +414,7 @@ Select an existing medication to update, or add this as a separate list entry.</
     <string name="family_updated">List changed: %1$s</string>
     <string name="family_add_medication">Add medication</string>
     <string name="family_import">Copy my local medications to family</string>
-    <string name="family_import_confirm">Copy current medications from this phone to your family profile? Everyone in the family can view and edit them. Previously imported entries from this phone will be updated, including their stock, without adding it up. Separate family entries remain. Earlier copies made by older app versions remain separate. Later local changes and alarms are not synchronized automatically.</string>
+    <string name="family_import_confirm">Replace all medications in your family profile with the current list from this phone? Existing entries in your family profile will be removed, including earlier copies. Other family profiles will not change. Everyone in the family can view and edit the new list. Later local changes and alarms are not synchronized automatically.</string>
     <string name="family_delete_person">Delete this profile</string>
     <string name="family_delete_person_confirm">Delete this profile and all its shared medications for everyone?</string>
     <string name="family_empty">No medications in this family list yet.</string>

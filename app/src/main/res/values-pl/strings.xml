@@ -416,7 +416,7 @@ Wybierz istniejący lek do aktualizacji albo dodaj ten wpis jako osobny lek.</st
     <string name="family_updated">Lista zmieniona: %1$s</string>
     <string name="family_add_medication">Dodaj lek</string>
     <string name="family_import">Skopiuj moje lokalne leki do rodziny</string>
-    <string name="family_import_confirm">Skopiować aktualne leki z tego telefonu do Twojego profilu rodzinnego? Wszyscy w rodzinie mogą je przeglądać i edytować. Wcześniej skopiowane z tego telefonu wpisy zostaną zaktualizowane, wraz z zapasem, bez sumowania. Osobne wpisy rodzinne pozostaną. Kopie utworzone starszą wersją aplikacji pozostaną osobnymi wpisami. Późniejsze zmiany lokalne i alarmy nie synchronizują się automatycznie.</string>
+    <string name="family_import_confirm">Zastąpić całą listę leków w Twoim profilu rodzinnym aktualną listą z tego telefonu? Dotychczasowe wpisy w Twoim profilu rodzinnym zostaną usunięte, w tym wcześniejsze kopie. Profile pozostałych osób nie zmienią się. Wszyscy w rodzinie mogą przeglądać i edytować nową listę. Późniejsze zmiany lokalne i alarmy nie synchronizują się automatycznie.</string>
     <string name="family_delete_person">Usuń ten profil</string>
     <string name="family_delete_person_confirm">Usunąć ten profil i wszystkie jego wspólne leki u wszystkich członków rodziny?</string>
     <string name="family_empty">Ta lista rodzinna nie zawiera jeszcze leków.</string>

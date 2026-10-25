@@ -56,7 +56,7 @@ android {
         applicationId = "pl.syntaxdevteam.medstock"
         minSdk = 31
         targetSdk = 37
-        versionCode = 7
+        versionCode = 8
         versionName = "1.0.0-Build-ed582d"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

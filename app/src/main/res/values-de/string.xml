@@ -412,7 +412,7 @@ Wähle ein vorhandenes Arzneimittel zur Aktualisierung oder füge diesen Eintrag
     <string name="family_updated">Liste geändert: %1$s</string>
     <string name="family_add_medication">Medikament hinzufügen</string>
     <string name="family_import">Meine lokalen Medikamente in die Familie kopieren</string>
-    <string name="family_import_confirm">Aktuelle Medikamente dieses Telefons in dein Familienprofil kopieren? Alle Familienmitglieder können sie ansehen und bearbeiten. Bereits von diesem Telefon kopierte Einträge werden samt Bestand aktualisiert, ohne die Mengen zu addieren. Andere Einträge bleiben erhalten. Mit älteren App-Versionen erstellte Kopien bleiben getrennt. Spätere lokale Änderungen und Alarme werden nicht automatisch synchronisiert.</string>
+    <string name="family_import_confirm">Alle Medikamente in deinem Familienprofil durch die aktuelle Liste dieses Telefons ersetzen? Vorhandene Einträge in deinem Familienprofil werden entfernt, einschließlich früherer Kopien. Andere Familienprofile bleiben unverändert. Alle Familienmitglieder können die neue Liste ansehen und bearbeiten. Spätere lokale Änderungen und Alarme werden nicht automatisch synchronisiert.</string>
     <string name="family_delete_person">Dieses Profil löschen</string>
     <string name="family_delete_person_confirm">Dieses Profil und alle zugehörigen gemeinsamen Medikamente für alle löschen?</string>
     <string name="family_empty">Diese Familienliste enthält noch keine Medikamente.</string>
