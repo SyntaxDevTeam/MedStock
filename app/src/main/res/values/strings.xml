@@ -138,7 +138,7 @@
     <string name="medication_delete_confirmation_unknown">this medication</string>
     <string name="medication_editor_required">Medication name is required.</string>
     <string name="medication_editor_invalid_numbers">Current stock and alert days must be valid numbers.</string>
-    <string name="medication_duplicate_title">Same medication and strength detected</string>
+    <string name="medication_duplicate_title">Same active substance and strength detected</string>
     <string name="medication_duplicate_message">Active substance: %1$s
 New medication: %2$s
 Stock to add: %3$s

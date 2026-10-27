@@ -2,19 +2,25 @@ package pl.syntaxdevteam.medstock.ui.medicationlist
 
 object ActiveSubstanceGrouping {
 
-    // Only offer stock addition for the same product, strength and stock unit.
+    // Only offer stock addition for the same active substance, strength and stock unit, regardless of brand.
     // Unknown strength or unit must never be treated as proof of compatibility.
-    fun findMatches(rawActiveSubstance: String, rawName: String, rawStrength: String,
+    fun findMatches(rawActiveSubstance: String, rawStrength: String,
                     rawUnit: String, medications: List<UserMedication>): List<UserMedication> {
         val normalizedActiveSubstance = normalize(rawActiveSubstance)
         val strength = normalize(rawStrength).replace(',', '.').replace(Regex("\\s+"), "")
-        val unit = normalize(MedicationUnitFormatter.abbreviate(rawUnit))
-        if (normalizedActiveSubstance.isBlank() || rawName.isBlank() || strength.isBlank() || unit.isBlank()) return emptyList()
+        val unit = normalizeStockUnit(rawUnit)
+        if (normalizedActiveSubstance.isBlank() || strength.isBlank() || unit.isBlank()) return emptyList()
         return medications.filter { medication ->
             normalize(medication.activeSubstance) == normalizedActiveSubstance &&
-                normalize(medication.name) == normalize(rawName) &&
                 normalize(medication.strength).replace(',', '.').replace(Regex("\\s+"), "") == strength &&
-                normalize(MedicationUnitFormatter.abbreviate(medication.unit)) == unit
+                normalizeStockUnit(medication.unit) == unit
+        }
+    }
+
+    private fun normalizeStockUnit(rawUnit: String): String {
+        return when (val unit = normalize(MedicationUnitFormatter.abbreviate(rawUnit))) {
+            "tabl.", "tabs." -> "tablet"
+            else -> unit
         }
     }
 

@@ -138,7 +138,7 @@
     <string name="medication_delete_confirmation_unknown">ten lek</string>
     <string name="medication_editor_required">Nazwa leku jest wymagana.</string>
     <string name="medication_editor_invalid_numbers">Aktualny stan i alert dni muszą być poprawnymi liczbami.</string>
-    <string name="medication_duplicate_title">Wykryto ten sam lek o tej samej mocy</string>
+    <string name="medication_duplicate_title">Wykryto tę samą substancję czynną i moc</string>
     <string name="medication_duplicate_message">Substancja czynna: %1$s
 Dodawany lek: %2$s
 Stan do dopisania: %3$s

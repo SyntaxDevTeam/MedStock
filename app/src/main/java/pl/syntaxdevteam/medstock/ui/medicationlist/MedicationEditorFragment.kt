@@ -109,7 +109,7 @@ class MedicationEditorFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            val matchingMedications = viewModel.matchingActiveSubstanceMedications(form.activeSubstance, form.name, form.strength, form.unit)
+            val matchingMedications = viewModel.matchingActiveSubstanceMedications(form.activeSubstance, form.strength, form.unit)
             if (matchingMedications.isEmpty()) {
                 addMedicationAsSeparateEntry(form)
             } else {

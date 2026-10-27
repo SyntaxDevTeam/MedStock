@@ -138,7 +138,7 @@
     <string name="medication_delete_confirmation_unknown">dieses Arzneimittel</string>
     <string name="medication_editor_required">Der Name des Arzneimittels ist erforderlich.</string>
     <string name="medication_editor_invalid_numbers">Aktueller Bestand und Warnungstage müssen gültige Zahlen sein.</string>
-    <string name="medication_duplicate_title">Gleiches Medikament mit gleicher Stärke erkannt</string>
+    <string name="medication_duplicate_title">Gleicher Wirkstoff mit gleicher Stärke erkannt</string>
     <string name="medication_duplicate_message">Wirkstoff: %1$s
 Hinzugefügtes Arzneimittel: %2$s
 Hinzuzufügender Bestand: %3$s

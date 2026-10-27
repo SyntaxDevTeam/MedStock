@@ -117,9 +117,9 @@ class MedicationListViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
-    fun matchingActiveSubstanceMedications(rawActiveSubstance: String, rawName: String,
+    fun matchingActiveSubstanceMedications(rawActiveSubstance: String,
                                           rawStrength: String, rawUnit: String): List<UserMedication> {
-        return ActiveSubstanceGrouping.findMatches(rawActiveSubstance, rawName, rawStrength, rawUnit, medications.value.orEmpty())
+        return ActiveSubstanceGrouping.findMatches(rawActiveSubstance, rawStrength, rawUnit, medications.value.orEmpty())
     }
 
     fun addStockToExistingMedication(id: Long, addedStock: Int) {
