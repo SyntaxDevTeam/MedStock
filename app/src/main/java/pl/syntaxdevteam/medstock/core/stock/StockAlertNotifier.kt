@@ -24,6 +24,10 @@ class StockAlertNotifier(private val context: Context) {
     fun showCurrentStockAlerts(medications: List<UserMedication>) {
         if (!canPostNotifications()) return
         ensureChannel()
+        val manager = context.getSystemService(NotificationManager::class.java)
+        if (!NotificationManagerCompat.from(context).areNotificationsEnabled() ||
+            manager.getNotificationChannel(CHANNEL_ID)?.importance == NotificationManager.IMPORTANCE_NONE
+        ) return
         medications.forEach { medication ->
             val stockInfo = MedicationStockCalculator.calculate(medication)
             if (stockInfo.status == MedicationStockStatus.OK) {
